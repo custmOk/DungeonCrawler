@@ -55,23 +55,19 @@ public class Dungeon
                 // 0 = up, 1 = right, 2 = down, 3 = left
                 case 0 ->
                 {
-                    if (row != 0)
-                        row--;
+                    if (row != 0) row--;
                 }
                 case 1 ->
                 {
-                    if (col != SIZE - 1)
-                        col++;
+                    if (col != SIZE - 1) col++;
                 }
                 case 2 ->
                 {
-                    if (row != SIZE - 1)
-                        row++;
+                    if (row != SIZE - 1) row++;
                 }
                 case 3 ->
                 {
-                    if (col != 0)
-                        col--;
+                    if (col != 0) col--;
                 }
             }
             if (!dungeon[row][col].getOpen())
@@ -148,6 +144,14 @@ public class Dungeon
         return new Potion(uses, power, effectType);
     }
 
+    Spell generateRandomSpell()
+    {
+        double damage = rand.nextDouble(9) + 1;
+        int manaCost = rand.nextInt(8) + 3;
+
+        return new Spell(manaCost, damage, generateRandomElement());
+    }
+
     Monster generateRandomMonster() throws IOException
     {
         List<String> monsterTypes = Files.readAllLines(new File("monsters.txt").toPath());
@@ -156,7 +160,18 @@ public class Dungeon
         double health = rand.nextDouble(10) + 10;
         Weapon weapon = generateRandomWeapon();
 
-        return new Monster(monsterType, health, weapon);
+        return new Monster(monsterType, health, weapon, rand.nextBoolean() ? generateRandomElement() : null);
+    }
+
+    private Element generateRandomElement()
+    {
+        int num = rand.nextInt(3);
+        return switch (num)
+        {
+            case 0 -> Element.WATER;
+            case 1 -> Element.NATURE;
+            default -> Element.FIRE;
+        };
     }
 
     String getDungeon()

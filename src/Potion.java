@@ -5,7 +5,9 @@ public class Potion extends Item
 
     public Potion(int uses, double power, String effectType)
     {
-        super("Potion of " + effectType, uses, effectType.equalsIgnoreCase("healing") ? "\uD83C\uDF7E" : "\uD83D\uDD0B");
+        super("Potion of " + effectType,
+              uses,
+              effectType.equalsIgnoreCase("healing") ? "\uD83C\uDF7E" : "\uD83D\uDD0B");
         this.effectType = effectType;
         this.power = power;
     }

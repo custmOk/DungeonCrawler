@@ -18,11 +18,6 @@ Minotaur
 Cyclops
 Cerberus
 Sphinx
-Fire Elemental
-Water Elemental
-Earth Elemental
-Air Elemental
-Ice Elemental
 Demon
 Succubus
 Hellhound

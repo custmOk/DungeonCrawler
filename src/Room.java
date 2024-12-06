@@ -55,16 +55,11 @@ public class Room
 
     public void updateStatus()
     {
-        if (playerIn)
-            status = PLAYER;
-        else if (startingRoom)
-            status = START;
-        else if (!monsters.isEmpty())
-            status = MONSTERS;
-        else if (!items.isEmpty())
-            status = ITEMS;
-        else
-            status = CLEAR;
+        if (playerIn) status = PLAYER;
+        else if (startingRoom) status = START;
+        else if (!monsters.isEmpty()) status = MONSTERS;
+        else if (!items.isEmpty()) status = ITEMS;
+        else status = CLEAR;
     }
 
     public void playerEnter()
@@ -73,6 +68,7 @@ public class Room
         playerIn = true;
         status = PLAYER;
     }
+
     public void playerLeave()
     {
         playerIn = false;
@@ -88,14 +84,16 @@ public class Room
     public void getRoomContents()
     {
         System.out.println("Current room contents:");
-        if (monsters.isEmpty())
-            System.out.println("\tNo monsters in this room");
-        else
-            System.out.println("\tMonsters: " + IntStream.range(0, monsters.size()).mapToObj(i -> String.format("%s [%d]", monsters.get(i).getInfo(), i)).collect(Collectors.joining(", ")));
-        if (items.isEmpty())
-            System.out.println("\tNo items in this room");
-        else
-            System.out.println("\tItems: " + IntStream.range(0, items.size()).mapToObj(i -> String.format("%s [%d]", items.get(i).getInfo(), i)).collect(Collectors.joining(", ")));
+        if (monsters.isEmpty()) System.out.println("\tNo monsters in this room");
+        else System.out.println("\tMonsters: " + IntStream.range(0, monsters.size()).mapToObj(i -> String.format(
+                "%s [%d]",
+                monsters.get(i).getInfo(),
+                i)).collect(Collectors.joining(", ")));
+        if (items.isEmpty()) System.out.println("\tNo items in this room");
+        else System.out.println("\tItems: " + IntStream.range(0, items.size()).mapToObj(i -> String.format("%s [%d]",
+                                                                                                           items.get(i).getInfo(),
+                                                                                                           i)).collect(
+                Collectors.joining(", ")));
         System.out.println();
     }
 }

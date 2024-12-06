@@ -75,7 +75,8 @@ public enum Color
 
     private final String code;
 
-    Color(String code) {
+    Color(String code)
+    {
         this.code = code;
     }
 
@@ -84,8 +85,14 @@ public enum Color
         System.out.println(RED + text + RESET);
     }
 
+    public static String critical(String text)
+    {
+        return RED + text + RESET;
+    }
+
     @Override
-    public String toString() {
+    public String toString()
+    {
         return code;
     }
 }
