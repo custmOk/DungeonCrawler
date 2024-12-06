@@ -90,6 +90,26 @@ public enum Color
         return RED + text + RESET;
     }
 
+    public static String warrior()
+    {
+        return RED + "Warrior" + RESET;
+    }
+
+    public static String thief()
+    {
+        return BLUE + "Thief" + RESET;
+    }
+
+    public static String mage()
+    {
+        return MAGENTA + "Mage" + RESET;
+    }
+
+    public static String ranger()
+    {
+        return GREEN + "Ranger" + RESET;
+    }
+
     @Override
     public String toString()
     {

@@ -57,37 +57,42 @@ public class DungeonRunner
                                  press enter to continue""");
 
         sc.nextLine();
+        printSpacing();
 
-        System.out.println("""
-                                   
-                                   Select a Class
-                                   
-                                   💂 Warrior
-                                       - Highest Stats: STR, DEF
-                                       - High Stats: HP
-                                       - Low Stats: MDF, DEX, AGI
-                                       - Lowest Stats: MAT, LCK, INT
-                                   👤 Thief
-                                       - Highest Stats: DEX, AGI
-                                       - High Stats: MAT, LCK
-                                       - Low Stats: HP, STR, INT
-                                       - Lowest Stats: DEF, MDF
-                                   👸 Mage
-                                       - Highest Stats: INT, MAT, MDF
-                                       - High Stats: HP
-                                       - Low Stats: LCK, DEX
-                                       - Lowest Stats: STR, AGI, DEF
-                                   👰 Ranger
-                                       - Highest Stats: LCK, AGI
-                                       - High Stats: DEX, INT
-                                       - Low Stats: DEF, HP, MAT
-                                       - Lowest Stats: MDF, STR""");
+        System.out.printf("""
+                                  Select a Class
+                                  
+                                  💂 %s
+                                      - Highest Stats: STR, DEF
+                                      - High Stats: HP
+                                      - Low Stats: MDF, DEX, AGI
+                                      - Lowest Stats: MAT, LCK, INT
+                                  👤 %s
+                                      - Highest Stats: DEX, AGI
+                                      - High Stats: MAT, LCK
+                                      - Low Stats: HP, STR, INT
+                                      - Lowest Stats: DEF, MDF
+                                  👸 %s
+                                      - Highest Stats: INT, MAT, MDF
+                                      - High Stats: HP
+                                      - Low Stats: LCK, DEX
+                                      - Lowest Stats: STR, AGI, DEF
+                                  👰 %s
+                                      - Highest Stats: LCK, AGI
+                                      - High Stats: DEX, INT
+                                      - Low Stats: DEF, HP, MAT
+                                      - Lowest Stats: MDF, STR
+                                  """, Color.warrior(), Color.thief(), Color.mage(), Color.ranger());
 
         boolean classSelected = false;
 
         while (!classSelected)
         {
-            System.out.print("Enter class selection (Warrior, Thief, Mage, Ranger): ");
+            System.out.printf("Enter class selection (%s, %s, %s, %s): ",
+                              Color.warrior(),
+                              Color.thief(),
+                              Color.mage(),
+                              Color.ranger());
             String choice = sc.nextLine();
 
             switch (choice.toLowerCase())
@@ -281,5 +286,12 @@ public class DungeonRunner
         {
             Color.logError("illegal input");
         }
+    }
+
+    private static void printSpacing()
+    {
+        System.out.println();
+        System.out.println("----------------------------------------------------");
+        System.out.println();
     }
 }

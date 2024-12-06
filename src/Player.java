@@ -141,7 +141,11 @@ public class Player
         System.out.printf("Selected Class: %s%nStats:%n\tStrength - %d%n\tDefense - %d%n\tDexterity - %d%n" +
                                   "\tAgility - %d%n\tIntelligence - %d%n\tHealth Points - %d%n" + "\tLuck - " + "%d%n"
                                   + "\tMagic Attack - %d%n\tMagic Defense - %d%n",
-                          cls.name,
+                          cls == Class.WARRIOR ?
+                                  Color.warrior() :
+                                  cls == Class.THIEF ?
+                                          Color.thief() :
+                                          cls == Class.MAGE ? Color.mage() : Color.ranger(),
                           cls.STR,
                           cls.DEF,
                           cls.DEX,
