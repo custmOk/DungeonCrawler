@@ -15,6 +15,11 @@ public class Potion extends Item
 
     public String toString()
     {
-        return String.format("%s Effect Type: %s | Power: %.2f | Uses: %d", icon, effectType, power, uses);
+        return String.format("%s Effect Type: %s | Rarity: %s | Power: %.2f | Uses: %d",
+                             icon,
+                             effectType,
+                             rarity,
+                             power,
+                             uses);
     }
 }

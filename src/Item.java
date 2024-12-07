@@ -2,13 +2,13 @@ import java.util.Random;
 
 public class Item
 {
+    private final int maxUses;
     Random rand = new Random();
     String name;
     int uses;
     int price;
     String icon;
     Rarity rarity;
-    private final int maxUses;
 
     public Item(String name, int uses, Rarity rarity, String icon)
     {

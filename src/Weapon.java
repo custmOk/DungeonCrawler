@@ -10,6 +10,11 @@ public class Weapon extends Item
 
     public String toString()
     {
-        return String.format("%s Weapon Type: %s | Damage: %.2f | Uses: %d", icon, name, damage, uses);
+        return String.format("%s Weapon Type: %s | Rarity: %s | Damage: %.2f | Uses: %d",
+                             icon,
+                             name,
+                             rarity,
+                             damage,
+                             uses);
     }
 }

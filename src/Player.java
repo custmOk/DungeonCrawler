@@ -388,6 +388,7 @@ public class Player
                 else
                 {
                     inventory.add(item);
+                    room.contents.remove(item);
                     int changeBy = Math.max(0, coins - item.price);
                     coins -= changeBy;
                     System.out.printf(item.getInfo() + " bought for %d coins%n", item.price);
@@ -406,7 +407,7 @@ public class Player
             {
                 Item item = inventory.get(index);
                 int sellValue = ((item.price + 1) / 2);
-                System.out.printf("%s sold for %d%n", item.getInfo(), sellValue);
+                System.out.printf("%s sold for %d coins%n", item.getInfo(), sellValue);
                 coins += sellValue;
                 if (item == equipped) equipped = null;
                 inventory.remove(item);
@@ -431,6 +432,14 @@ public class Player
             System.out.printf("❗You must escape from the starting room! (%s)%n", dungeon.currentRoom.START);
             return false;
         }
+    }
+
+    public void cheat()
+    {
+        coins = 100000;
+        health = 100000;
+        ((Weapon) equipped).damage = 100000;
+        equipped.uses = 100000;
     }
 
     private void monstersAttack()

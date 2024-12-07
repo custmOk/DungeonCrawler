@@ -14,6 +14,11 @@ public class Spell extends Item
 
     public String toString()
     {
-        return String.format("%s Spell Type: %s | Damage: %.2f | Mana Cost: %d", icon, name, damage, manaCost);
+        return String.format("%s Spell Type: %s | Rarity: %s | Damage: %.2f | Mana Cost: %d",
+                             icon,
+                             name,
+                             rarity,
+                             damage,
+                             manaCost);
     }
 }

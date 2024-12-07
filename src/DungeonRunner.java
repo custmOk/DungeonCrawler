@@ -250,6 +250,7 @@ public class DungeonRunner
                 {
                     if (player.escape()) quit = true;
                 }
+                case "cheat" -> player.cheat();
                 case "descriptions" -> System.out.println("""
                                                                   map - displays the map
                                                                   pouch - prints amount of coins collected
