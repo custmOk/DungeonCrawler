@@ -24,7 +24,7 @@ public class Dungeon
     {
         for (int i = 0; i < SIZE; i++)
             for (int j = 0; j < SIZE; j++)
-                dungeon[i][j] = new Room(false, (i * SIZE) + (j + 1), i, j);
+                dungeon[i][j] = new Room(false, (i * SIZE) + (j + 1), i, j, this);
         rand = new Random();
         seed = rand.nextLong();
         rand.setSeed(seed);
@@ -35,7 +35,7 @@ public class Dungeon
     {
         for (int i = 0; i < SIZE; i++)
             for (int j = 0; j < SIZE; j++)
-                dungeon[i][j] = new Room(false, (i * SIZE) + (j + 1), i, j);
+                dungeon[i][j] = new Room(false, (i * SIZE) + (j + 1), i, j, this);
         rand = new Random();
         this.seed = seed;
         rand.setSeed(seed);
@@ -44,11 +44,15 @@ public class Dungeon
 
     private void constructDungeon() throws IOException
     {
-        int roomsOpen = 1;
+        int roomsOpen = 0;
+        int shopsOpened = 0;
+        int maxShops = 1;
         int row = rand.nextInt(SIZE);
         int col = rand.nextInt(SIZE);
 
-        while (roomsOpen < (int) ((SIZE * SIZE) * (FILL_PERCENT / 100.0)))
+        int targetRooms = (int) ((SIZE * SIZE) * (FILL_PERCENT / 100.0));
+
+        while (roomsOpen < targetRooms)
         {
             switch (rand.nextInt(4))
             {
@@ -72,13 +76,48 @@ public class Dungeon
             }
             if (!dungeon[row][col].getOpen())
             {
-                dungeon[row][col].setOpen(true);
-                for (int i = 0; i < rand.nextInt(4); i++)
-                    dungeon[row][col].addItem(rand.nextBoolean() ? generateRandomWeapon() : generateRandomPotion());
-                for (int i = 0; i < rand.nextInt(4); i++)
-                    dungeon[row][col].addMonster(generateRandomMonster());
-                dungeon[row][col].updateStatus();
+                boolean isShop =
+                        shopsOpened < maxShops && rand.nextDouble() < 0.1 || targetRooms - roomsOpen <= maxShops - shopsOpened;
+
+                if (isShop)
+                {
+                    dungeon[row][col] = new Shop(true,
+                                                 dungeon[row][col].number,
+                                                 dungeon[row][col].row,
+                                                 dungeon[row][col].col,
+                                                 this);
+                    dungeon[row][col].type = RoomType.SHOP;
+                    shopsOpened++;
+                }
+                else
+                {
+                    dungeon[row][col].setOpen(true);
+                    dungeon[row][col].type = RoomType.NORMAL;
+
+                    for (int i = 0; i < rand.nextInt(4); i++)
+                    {
+                        double chance = rand.nextDouble();
+                        Rarity rarity;
+                        if (chance < 0.6) rarity = Rarity.COMMON;
+                        else if (chance < 0.9) rarity = Rarity.UNCOMMON;
+                        else rarity = Rarity.RARE;
+                        dungeon[row][col].addItem(rand.nextBoolean() ?
+                                                          generateRandomWeapon(rarity) :
+                                                          generateRandomPotion(rarity));
+                    }
+                    for (int i = 0; i < rand.nextInt(4); i++)
+                    {
+                        double chance = rand.nextDouble();
+                        Rarity rarity;
+                        if (chance < 0.6) rarity = Rarity.COMMON;
+                        else if (chance < 0.9) rarity = Rarity.UNCOMMON;
+                        else rarity = Rarity.RARE;
+                        dungeon[row][col].addMonster(generateRandomMonster(rarity));
+                    }
+                }
+
                 roomsOpen++;
+                dungeon[row][col].updateStatus();
                 openRooms.add(dungeon[row][col]);
             }
         }
@@ -124,43 +163,69 @@ public class Dungeon
         return dungeonFile;
     }
 
-    Weapon generateRandomWeapon() throws IOException
+    Weapon generateRandomWeapon(Rarity rarity) throws IOException
     {
         List<String> weaponTypes = Files.readAllLines(new File("weapons.txt").toPath());
 
         String weaponType = weaponTypes.get(rand.nextInt(weaponTypes.size()));
-        double damage = rand.nextDouble(9) + 1;
+        double damage = switch (rarity)
+        {
+            case COMMON -> rand.nextDouble(4) + 1;
+            case UNCOMMON -> rand.nextDouble(5) + 5;
+            case RARE -> rand.nextDouble(5) + 10;
+            default -> 0;
+        };
         int durability = rand.nextInt(21) + 10;
 
-        return new Weapon(durability, damage, weaponType);
+        return new Weapon(durability, damage, weaponType, rarity);
     }
 
-    Potion generateRandomPotion()
+    Potion generateRandomPotion(Rarity rarity)
     {
         String effectType = rand.nextBoolean() ? "Healing" : "Repairing";
-        double power = rand.nextDouble(9) + 1;
-        int uses = rand.nextInt(10) + 1;
+        double power = switch (rarity)
+        {
+            case COMMON -> rand.nextDouble(5) + 5;
+            case UNCOMMON -> rand.nextDouble(5) + 10;
+            case RARE -> rand.nextDouble(5) + 15;
+            default -> 0;
+        };
+        int uses = rand.nextInt(5) + 1;
 
-        return new Potion(uses, power, effectType);
+        return new Potion(uses, power, effectType, rarity);
     }
 
-    Spell generateRandomSpell()
+    Spell generateRandomSpell(Rarity rarity)
     {
-        double damage = rand.nextDouble(9) + 1;
+        double damage = switch (rarity)
+        {
+            case COMMON -> rand.nextDouble(4) + 1;
+            case UNCOMMON -> rand.nextDouble(5) + 5;
+            case RARE -> rand.nextDouble(5) + 10;
+            default -> 0;
+        };
         int manaCost = rand.nextInt(8) + 3;
 
-        return new Spell(manaCost, damage, generateRandomElement());
+        return new Spell(manaCost, damage, generateRandomElement(), rarity);
     }
 
-    Monster generateRandomMonster() throws IOException
+    Monster generateRandomMonster(Rarity rarity) throws IOException
     {
         List<String> monsterTypes = Files.readAllLines(new File("monsters.txt").toPath());
 
         String monsterType = monsterTypes.get(rand.nextInt(monsterTypes.size()));
-        double health = rand.nextDouble(10) + 10;
-        Weapon weapon = generateRandomWeapon();
 
-        return new Monster(monsterType, health, weapon, rand.nextBoolean() ? generateRandomElement() : null);
+        double health = switch (rarity)
+        {
+            case COMMON -> rand.nextDouble(10) + 10;
+            case UNCOMMON -> rand.nextDouble(10) + 25;
+            case RARE -> rand.nextDouble(10) + 30;
+            case EPIC -> rand.nextDouble(10) + 40;
+            case LEGENDARY -> rand.nextDouble(25) + 50;
+        };
+        Weapon weapon = generateRandomWeapon(rarity);
+
+        return new Monster(monsterType, health, weapon, rand.nextBoolean() ? generateRandomElement() : null, rarity);
     }
 
     private Element generateRandomElement()
@@ -168,9 +233,9 @@ public class Dungeon
         int num = rand.nextInt(3);
         return switch (num)
         {
-            case 0 -> Element.WATER;
-            case 1 -> Element.NATURE;
-            default -> Element.FIRE;
+            case 0 -> Element.FIRE;
+            case 1 -> Element.WATER;
+            default -> Element.NATURE;
         };
     }
 

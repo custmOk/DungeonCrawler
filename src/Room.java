@@ -7,29 +7,35 @@ public class Room
     final String WALL = "⬛";
     final String START = "\uD83C\uDFE0";
     final String PLAYER = "\uD83D\uDC6E";
+    final String SHOP = "\uD83C\uDFEA";
     final String MONSTERS = "\uD83D\uDC80";
     final String ITEMS = "\uD83C\uDFF9";
     final String CLEAR = "\uD83D\uDEA9";
 
     int row;
     int col;
+    int number;
+
+    RoomType type;
+    Dungeon dungeon;
 
     boolean startingRoom;
     boolean open;
     boolean playerIn;
+
     String status;
     String tempStatus = START;
-    int number;
 
     ArrayList<Item> items = new ArrayList<>();
     ArrayList<Monster> monsters = new ArrayList<>();
 
-    public Room(boolean open, int number, int row, int col)
+    public Room(boolean open, int number, int row, int col, Dungeon dungeon)
     {
         this.number = number;
         setOpen(open);
         this.row = row;
         this.col = col;
+        this.dungeon = dungeon;
     }
 
     public boolean getOpen()
@@ -57,6 +63,7 @@ public class Room
     {
         if (playerIn) status = PLAYER;
         else if (startingRoom) status = START;
+        else if (type == RoomType.SHOP) status = SHOP;
         else if (!monsters.isEmpty()) status = MONSTERS;
         else if (!items.isEmpty()) status = ITEMS;
         else status = CLEAR;

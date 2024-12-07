@@ -50,6 +50,7 @@ public class DungeonRunner
                                  ⬛ - Wall
                                  \uD83C\uDFE0 - Start and Exit Room
                                  \uD83D\uDC6E - Your Current Room
+                                 \uD83C\uDFEA - Shop/Store Room
                                  \uD83D\uDC80 - Monsters in Room (can have items)
                                  \uD83C\uDFF9 - Items in Room (no monsters)
                                  \uD83D\uDEA9 - No Monsters or Items in Room
@@ -82,17 +83,21 @@ public class DungeonRunner
                                       - High Stats: DEX, INT
                                       - Low Stats: DEF, HP, MAT
                                       - Lowest Stats: MDF, STR
-                                  """, Color.warrior(), Color.thief(), Color.mage(), Color.ranger());
+                                  %n""",
+                          Color.color("Warrior", Color.RED),
+                          Color.color("Thief", Color.BLUE),
+                          Color.color("Mage", Color.MAGENTA),
+                          Color.color("Ranger", Color.GREEN));
 
         boolean classSelected = false;
 
         while (!classSelected)
         {
             System.out.printf("Enter class selection (%s, %s, %s, %s): ",
-                              Color.warrior(),
-                              Color.thief(),
-                              Color.mage(),
-                              Color.ranger());
+                              Color.color("Warrior", Color.RED),
+                              Color.color("Thief", Color.BLUE),
+                              Color.color("Mage", Color.MAGENTA),
+                              Color.color("Ranger", Color.GREEN));
             String choice = sc.nextLine();
 
             switch (choice.toLowerCase())
@@ -129,13 +134,15 @@ public class DungeonRunner
             }
         }
 
-        System.out.println("""
-                                   
-                                   Select Element Affinity
-                                   
-                                   \uD83D\uDD25 Fire
-                                   \uD83D\uDCA7 Water
-                                   \uD83C\uDF3B Nature""");
+        printSpacing();
+
+        System.out.printf("""
+                                  Select Element Affinity
+                                  
+                                  %s Fire
+                                  %s Water
+                                  %s Nature
+                                  %n""", Element.FIRE.icon, Element.WATER.icon, Element.NATURE.icon);
 
         boolean affinitySelected = false;
 
@@ -175,6 +182,8 @@ public class DungeonRunner
             }
         }
 
+        printSpacing();
+
         System.out.println(dungeon.getDungeon());
         dungeon.currentRoom.getRoomContents();
 
@@ -182,25 +191,35 @@ public class DungeonRunner
 
         while (!quit)
         {
-            System.out.println("""
-                                       Available Actions:
-                                           🧭 Enter [WASD] to move
-                                           🌎 map
-                                           💰 pouch
-                                           📊 status
-                                           💁 player
-                                           📄 contents
-                                           🔍 examine monster [index]
-                                           🔎 examine item [index]
-                                           📂 take [index]
-                                           📕 inventory [index]
-                                           🎒 inventory
-                                           👋 use [index]
-                                           💥 attack [index]
-                                           🏃 escape (only works in starting room)
-                                           📋 descriptions
-                                       """);
+            System.out.printf("""
+                                      Available Actions:
+                                      %s
+                                      %s
+                                      %s
+                                      %s
+                                      %s
+                                      %s
+                                      %s
+                                      %s
+                                      """,
+                              tableDivider(0),
+                              tableRow(Color.color("🔸 General", Color.YELLOW),
+                                       Color.color("🔸 Information", Color.YELLOW),
+                                       Color.color("🔸 Room", Color.YELLOW),
+                                       Color.color("🔸 Player", Color.YELLOW),
+                                       Color.color("🔸 Shop", Color.YELLOW)),
+                              tableRow("🧭 [WASD]", "💰 pouch", "📄 contents", "🎒 inventory", "💵 shop"),
+                              tableRow("🌎 map", "📊 status", "🔍 examine monster #", "📕 inventory #", "💴 shop #"),
+                              tableRow("🏃 escape", "💁 player", "🔎 examine item #", "👋 use #", "💶 shop buy #"),
+                              tableRow("📋 descriptions",
+                                       "\uD83D\uDD39",
+                                       "📂 take #",
+                                       "\uD83D\uDD39",
+                                       "💷 shop sell " + "#"),
+                              tableRow("\uD83D\uDD39", "\uD83D\uDD39", "💥 attack #", "\uD83D\uDD39", "\uD83D\uDD39"),
+                              tableDivider(1));
 
+            System.out.print("Action: ");
             String[] actions = sc.nextLine().split("\\s+");
             String action = actions[0].toLowerCase();
 
@@ -221,6 +240,12 @@ public class DungeonRunner
                 }
                 case "use" -> handleActionWithIndex(player::use, actions);
                 case "attack" -> handleActionWithIndex(player::attack, actions);
+                case "shop" ->
+                {
+                    if (actions.length < 2) player.shop();
+                    else if (actions.length < 3) handleActionWithIndex(player::shop, actions);
+                    else handleShop(player, actions);
+                }
                 case "escape" ->
                 {
                     if (player.escape()) quit = true;
@@ -231,13 +256,17 @@ public class DungeonRunner
                                                                   status - prints player health and mana count
                                                                   player - prints class details about player
                                                                   contents - prints current room contents
-                                                                  examine monster [index] - prints monster info at index
-                                                                  examine item [index] - prints item info at index
-                                                                  take [index] - takes item from current room at index
-                                                                  inventory [index] - prints item info from inventory at index
+                                                                  examine monster # - prints monster info at index #
+                                                                  examine item # - prints item info at index #
+                                                                  take # - takes item from current room at index # (if in shop, buys item)
+                                                                  inventory # - prints item info from inventory at index #
                                                                   inventory - prints items and indices in inventory
-                                                                  use [index] - uses potion from inventory or equips weapon from inventory at index
-                                                                  attack [index] - attacks monster in current room at index
+                                                                  use # - uses potion, equips weapon, or equips spell from inventory at index #
+                                                                  attack # - attacks monster in current room at index #
+                                                                  shop - prints items and cost in shop
+                                                                  shop # - prints item from shop at index #
+                                                                  shop buy # - buys item at index #
+                                                                  shop sell # - sells item from inventory for half price at index #
                                                                   escape - escapes the dungeon if in starting room""");
                 default -> Color.logError("illegal action");
             }
@@ -270,6 +299,29 @@ public class DungeonRunner
         }
     }
 
+    private static void handleShop(Player player, String[] actions)
+    {
+        if (actions.length < 3)
+        {
+            Color.logError("illegal input");
+            return;
+        }
+        try
+        {
+            int index = Integer.parseInt(actions[2]);
+            switch (actions[1].toLowerCase())
+            {
+                case "buy" -> player.buy(index);
+                case "sell" -> player.sell(index);
+                default -> Color.logError("illegal input");
+            }
+        }
+        catch (NumberFormatException e)
+        {
+            Color.logError("illegal input");
+        }
+    }
+
     private static void handleActionWithIndex(Consumer<Integer> action, String[] actions)
     {
         if (actions.length < 2)
@@ -293,5 +345,34 @@ public class DungeonRunner
         System.out.println();
         System.out.println("----------------------------------------------------");
         System.out.println();
+    }
+
+    private static String tableRow(String col1, String col2, String col3, String col4, String col5)
+    {
+        return String.format("   │ %-20s    │ %-20s    │ %-20s    │ %-20s    │ %-20s    │",
+                             pad(col1),
+                             pad(col2),
+                             pad(col3),
+                             pad(col4),
+                             pad(col5));
+    }
+
+    private static String tableDivider(int place)
+    {
+        String line = "───────────────────────";
+        String format = switch (place)
+        {
+            case 0 -> "\uD83D\uDD3B┌%-23s┬%-23s┬%-23s┬%-23s┬%-23s┐\uD83D\uDD3B";
+            case 1 -> "\uD83D\uDD3A└%-23s┴%-23s┴%-23s┴%-23s┴%-23s┘\uD83D\uDD3A";
+            default -> "";
+        };
+        return String.format(format, line, line, line, line, line);
+    }
+
+    private static String pad(String text)
+    {
+        String plainText = text.replaceAll("\u001B\\[[;\\d]*m", "");
+        int padding = 20 - plainText.length();
+        return text + " ".repeat(Math.max(0, padding));
     }
 }

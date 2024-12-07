@@ -4,9 +4,9 @@ public class Spell extends Item
     double damage;
     int manaCost;
 
-    public Spell(int manaCost, double damage, Element element)
+    public Spell(int manaCost, double damage, Element element, Rarity rarity)
     {
-        super(element.name, 1, element.icon);
+        super(element.name, 1, rarity, element.icon);
         this.damage = damage;
         this.manaCost = manaCost;
         this.element = element;

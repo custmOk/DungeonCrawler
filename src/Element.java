@@ -2,7 +2,7 @@ public enum Element
 {
     FIRE("Fire", "Nature", "Water", "\uD83D\uDD25"),
     WATER("Water", "Fire", "Nature", "\uD83D\uDCA7"),
-    NATURE("Nature", "Water", "Fire", "\uD83E\uDEA8");
+    NATURE("Nature", "Water", "Fire", "\uD83C\uDF3B");
 
     final String name, strong, weak, icon;
 

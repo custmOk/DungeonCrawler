@@ -23,9 +23,9 @@ public class Player
     {
         inventory = new ArrayList<>();
         this.dungeon = dungeon;
-        inventory.add(dungeon.generateRandomWeapon());
-        inventory.add(dungeon.generateRandomPotion());
-        inventory.add(dungeon.generateRandomSpell());
+        inventory.add(dungeon.generateRandomWeapon(Rarity.COMMON));
+        inventory.add(dungeon.generateRandomPotion(Rarity.COMMON));
+        inventory.add(dungeon.generateRandomSpell(Rarity.COMMON));
 
         equipped = inventory.getFirst();
         MAX_HEALTH = 100;
@@ -34,7 +34,11 @@ public class Player
         mana = MAX_MANA;
 
         Random rand = new Random(dungeon.seed);
-        dungeon.currentRoom = dungeon.openRooms.get(rand.nextInt(dungeon.openRooms.size()));
+        do
+        {
+            dungeon.currentRoom = dungeon.openRooms.get(rand.nextInt(dungeon.openRooms.size()));
+        } while (dungeon.currentRoom.type != RoomType.NORMAL);
+
         dungeon.currentRoom.startingRoom = true;
         dungeon.currentRoom.playerIn = true;
         dungeon.currentRoom.updateStatus();
@@ -142,10 +146,12 @@ public class Player
                                   "\tAgility - %d%n\tIntelligence - %d%n\tHealth Points - %d%n" + "\tLuck - " + "%d%n"
                                   + "\tMagic Attack - %d%n\tMagic Defense - %d%n",
                           cls == Class.WARRIOR ?
-                                  Color.warrior() :
+                                  Color.color("Warrior", Color.RED) :
                                   cls == Class.THIEF ?
-                                          Color.thief() :
-                                          cls == Class.MAGE ? Color.mage() : Color.ranger(),
+                                          Color.color("Thief", Color.BLUE) :
+                                          cls == Class.MAGE ?
+                                                  Color.color("Mage", Color.MAGENTA) :
+                                                  Color.color("Ranger", Color.GREEN),
                           cls.STR,
                           cls.DEF,
                           cls.DEX,
@@ -344,12 +350,77 @@ public class Player
         }
     }
 
+    public void shop()
+    {
+        if (dungeon.currentRoom.type == RoomType.SHOP)
+        {
+            Shop room = (Shop) dungeon.currentRoom;
+            for (int i = 0; i < room.contents.size(); i++)
+            {
+                Item item = room.contents.get(i);
+                System.out.printf("%s %s - %d coins [%d]%n", item.icon, item.name, item.price, i);
+            }
+        }
+        else System.out.printf("❗You must be in a shop room! (%s)%n", dungeon.currentRoom.SHOP);
+    }
+
+    public void shop(int index)
+    {
+        if (dungeon.currentRoom.type == RoomType.SHOP)
+        {
+            Shop room = (Shop) dungeon.currentRoom;
+            Item item = room.contents.get(index);
+            System.out.printf(item + " | \uD83E\uDE99 Price: %d%n", item.price);
+        }
+        else System.out.printf("❗You must be in a shop room! (%s)%n", dungeon.currentRoom.SHOP);
+    }
+
+    public void buy(int index)
+    {
+        if (dungeon.currentRoom.type == RoomType.SHOP)
+        {
+            Shop room = (Shop) dungeon.currentRoom;
+            if (index < 0 || index >= room.contents.size()) Color.logError("invalid index");
+            else
+            {
+                Item item = room.contents.get(index);
+                if (coins < item.price) System.out.println("Not enough coins");
+                else
+                {
+                    inventory.add(item);
+                    int changeBy = Math.max(0, coins - item.price);
+                    coins -= changeBy;
+                    System.out.printf(item.getInfo() + " bought for %d coins%n", item.price);
+                }
+            }
+        }
+        else System.out.printf("❗You must be in a shop room! (%s)%n", dungeon.currentRoom.SHOP);
+    }
+
+    public void sell(int index)
+    {
+        if (dungeon.currentRoom.type == RoomType.SHOP)
+        {
+            if (index < 0 || index >= inventory.size()) Color.logError("invalid index");
+            else
+            {
+                Item item = inventory.get(index);
+                int sellValue = ((item.price + 1) / 2);
+                System.out.printf("%s sold for %d%n", item.getInfo(), sellValue);
+                coins += sellValue;
+                if (item == equipped) equipped = null;
+                inventory.remove(item);
+            }
+        }
+        else System.out.printf("❗You must be in a shop room! (%s)%n", dungeon.currentRoom.SHOP);
+    }
+
     public boolean escape()
     {
         if (dungeon.currentRoom.startingRoom)
         {
             System.out.printf(
-                    "\uD83C\uDFC6 Successfully Escaped!%n\uD83D\uDC7FMonsters Defeated: %d%n\uD83E\uDE99Coins " +
+                    "\uD83C\uDFC6 Successfully Escaped!%n\uD83D\uDC7F Monsters Defeated: %d%n\uD83E\uDE99 Coins " +
                             "Collected: %d%n",
                     defeatedMonsters,
                     coins);

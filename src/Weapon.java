@@ -2,9 +2,9 @@ public class Weapon extends Item
 {
     double damage;
 
-    public Weapon(int uses, double damage, String weaponType)
+    public Weapon(int uses, double damage, String weaponType, Rarity rarity)
     {
-        super(weaponType, uses, "\uD83D\uDD2A");
+        super(weaponType, uses, rarity, "\uD83D\uDD2A");
         this.damage = damage;
     }
 
