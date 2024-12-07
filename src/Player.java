@@ -120,12 +120,17 @@ public class Player
 
     public void health()
     {
-        System.out.printf("\uD83D\uDC96 Player health: %.2f%n", health);
+        System.out.printf("\uD83D\uDC96 Player health: %.2f/%.2f%n", health, MAX_HEALTH);
     }
 
     public void mana()
     {
-        System.out.printf("\uD83E\uDE84 Player mana: %.2f%n", mana);
+        System.out.printf("\uD83E\uDE84 Player mana: %.2f/%.2f%n", mana, MAX_MANA);
+    }
+
+    public void durability()
+    {
+        System.out.printf("\uD83D\uDD2A Weapon uses: %d/%d%n", equipped.uses, equipped.maxUses);
     }
 
     public void status()
@@ -137,7 +142,7 @@ public class Player
     public void player()
     {
         classInfo();
-        System.out.printf("Element Affinity: %s %s%n", affinity.icon, affinity.name);
+        System.out.printf("Element Affinity: %s %s%n", affinity.icon, Color.color(affinity.name, affinity.color));
     }
 
     public void classInfo()
@@ -163,11 +168,6 @@ public class Player
                           cls.MDF);
     }
 
-    public void durability()
-    {
-        System.out.printf("\uD83D\uDD2A Weapon uses: %d%n", equipped.uses);
-    }
-
     public void contents()
     {
         dungeon.currentRoom.getRoomContents();
@@ -190,7 +190,9 @@ public class Player
         if (index < 0 || index >= dungeon.currentRoom.items.size()) Color.logError("invalid index");
         else
         {
-            inventory.add(dungeon.currentRoom.items.remove(index));
+            Item item = dungeon.currentRoom.items.remove(index);
+            inventory.add(item);
+            System.out.printf("%s added to inventory%n", item.getInfo());
 
             monstersAttack();
         }
@@ -219,12 +221,14 @@ public class Player
         else if (inventory.get(index) instanceof Weapon weapon)
         {
             equipped = weapon;
+            System.out.printf("%s equipped%n", equipped.getInfo());
 
             monstersAttack();
         }
         else if (inventory.get(index) instanceof Spell spell)
         {
             equipped = spell;
+            System.out.printf("%s equipped%n", equipped.getInfo());
 
             monstersAttack();
         }
@@ -232,35 +236,50 @@ public class Player
         {
             if (potion.uses > 0)
             {
-                if (potion.effectType.equalsIgnoreCase("healing"))
+                switch (potion.type)
                 {
-                    double changeBy = Math.min(MAX_HEALTH - health, potion.power);
-                    if (changeBy == 0)
+                    case HEALING ->
                     {
-                        System.out.println("\uD83D\uDCAF Already at max health");
-                        return;
+                        double changeBy = Math.min(MAX_HEALTH - health, potion.power);
+                        if (changeBy == 0)
+                        {
+                            System.out.println("\uD83D\uDCAF Already at max health");
+                            return;
+                        }
+                        health += changeBy;
+                        System.out.printf("\uD83D\uDCC8 Healed for %.2f%n", changeBy);
+                        health();
                     }
-                    health += changeBy;
-                    System.out.printf("\uD83D\uDCC8 Healed for %.2f%n", changeBy);
-                    health();
-                }
-                else
-                {
-                    int changeBy = (int) Math.min(equipped.getMaxUses() - equipped.uses, potion.power);
-                    if (changeBy == 0)
+                    case REPAIRING ->
                     {
-                        System.out.println("\uD83D\uDCAF Already at max uses");
-                        return;
+                        int changeBy = (int) Math.min(equipped.maxUses - equipped.uses, potion.power);
+                        if (changeBy == 0)
+                        {
+                            System.out.println("\uD83D\uDCAF Already at max uses");
+                            return;
+                        }
+                        equipped.uses += changeBy;
+                        System.out.printf("\uD83D\uDCC8 Uses raised by %d%n", changeBy);
+                        durability();
                     }
-                    equipped.uses += changeBy;
-                    System.out.printf("\uD83D\uDCC8 Uses raised by %d%n", changeBy);
-                    durability();
+                    case MANA ->
+                    {
+                        int changeBy = (int) Math.min(MAX_MANA - mana, potion.power);
+                        if (changeBy == 0)
+                        {
+                            System.out.println("\uD83D\uDCAF Already at max mana");
+                            return;
+                        }
+                        mana += changeBy;
+                        System.out.printf("\uD83D\uDCC8 Mana raised by %d%n", changeBy);
+                        mana();
+                    }
                 }
                 potion.uses--;
 
                 monstersAttack();
             }
-            System.out.printf("\uD83D\uDCC9 %s uses left: %d%n", potion.effectType, potion.uses);
+            System.out.printf("\uD83D\uDCC9 %s uses left: %d%n", potion.type, potion.uses);
             if (potion.uses <= 0) inventory.remove(index);
         }
     }
@@ -271,6 +290,7 @@ public class Player
         else
         {
             Monster monster = dungeon.currentRoom.monsters.get(index);
+            boolean magic = false, hit = false;
             switch (equipped)
             {
                 case null ->
@@ -289,6 +309,7 @@ public class Player
                                       monster.type,
                                       changeBy,
                                       isCritical ? " " + Color.critical("critical") : "");
+                    if (weapon.uses == 1) System.out.printf("%s has one more use%n", weapon.getInfo());
                     if (weapon.uses <= 0)
                     {
                         inventory.remove(weapon);
@@ -298,9 +319,11 @@ public class Player
                 }
                 case Spell spell ->
                 {
+                    magic = true;
                     if (mana < spell.manaCost) System.out.println("Not enough mana");
                     else
                     {
+                        hit = true;
                         double baseChange = spell.damage * levelScaleStrDefHpIntMatMdf(cls.MAT);
                         String effectiveness = switch (monster.element)
                         {
@@ -346,7 +369,7 @@ public class Player
             }
             else System.out.printf("\uD83D\uDC9C %s health: %.2f%n", monster.type, monster.health);
 
-            monstersAttack();
+            if (!magic || hit) monstersAttack();
         }
     }
 

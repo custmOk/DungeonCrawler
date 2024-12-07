@@ -2,7 +2,7 @@ import java.util.Random;
 
 public class Item
 {
-    private final int maxUses;
+    int maxUses;
     Random rand = new Random();
     String name;
     int uses;
@@ -49,11 +49,6 @@ public class Item
         }
 
         this.price = rand.nextInt(minPrice, maxPrice);
-    }
-
-    public int getMaxUses()
-    {
-        return maxUses;
     }
 
     public String getInfo()

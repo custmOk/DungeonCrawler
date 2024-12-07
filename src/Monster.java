@@ -23,11 +23,11 @@ public class Monster
 
     public String toString()
     {
-        return String.format("%s Monster Type: %s | Rarity: %s | Element Type: %s | Health: %.2f | " + weapon,
+        return String.format("%s %s %s%s | Health: %.2f | " + weapon,
                              icon,
+                             Color.color(rarity.name, rarity.color),
+                             element == null ? "" : (Color.color(element.name, element.color) + " "),
                              type,
-                             rarity,
-                             element == null ? "None" : element.name,
                              health);
     }
 }

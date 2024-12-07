@@ -6,7 +6,7 @@ public class Spell extends Item
 
     public Spell(int manaCost, double damage, Element element, Rarity rarity)
     {
-        super(element.name, 1, rarity, element.icon);
+        super(element.name + " Spell", 1, rarity, element.icon);
         this.damage = damage;
         this.manaCost = manaCost;
         this.element = element;
@@ -14,10 +14,10 @@ public class Spell extends Item
 
     public String toString()
     {
-        return String.format("%s Spell Type: %s | Rarity: %s | Damage: %.2f | Mana Cost: %d",
+        return String.format("%s %s %s | Damage: %.2f | Mana Cost: %d",
                              icon,
+                             Color.color(rarity.name, rarity.color),
                              name,
-                             rarity,
                              damage,
                              manaCost);
     }

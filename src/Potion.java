@@ -1,24 +1,24 @@
 public class Potion extends Item
 {
     double power;
-    String effectType;
+    PotionType type;
 
-    public Potion(int uses, double power, String effectType, Rarity rarity)
+    public Potion(int uses, double power, PotionType type, Rarity rarity)
     {
-        super("Potion of " + effectType,
+        super("Potion of " + type.name,
               uses,
               rarity,
-              effectType.equalsIgnoreCase("healing") ? "\uD83C\uDF7E" : "\uD83D\uDD0B");
-        this.effectType = effectType;
+              type == PotionType.HEALING ? "\uD83C\uDF7E" : "\uD83D\uDD0B");
+        this.type = type;
         this.power = power;
     }
 
     public String toString()
     {
-        return String.format("%s Effect Type: %s | Rarity: %s | Power: %.2f | Uses: %d",
+        return String.format("%s %s %s | Power: %.2f | Uses: %d",
                              icon,
-                             effectType,
-                             rarity,
+                             Color.color(rarity.name, rarity.color),
+                             type.name,
                              power,
                              uses);
     }

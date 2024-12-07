@@ -182,7 +182,13 @@ public class Dungeon
 
     Potion generateRandomPotion(Rarity rarity)
     {
-        String effectType = rand.nextBoolean() ? "Healing" : "Repairing";
+        PotionType type = switch(rand.nextInt(3))
+        {
+            case 0 -> PotionType.HEALING;
+            case 1 -> PotionType.REPAIRING;
+            case 2 -> PotionType.MANA;
+            default -> null;
+        };
         double power = switch (rarity)
         {
             case COMMON -> rand.nextDouble(5) + 5;
@@ -192,7 +198,7 @@ public class Dungeon
         };
         int uses = rand.nextInt(5) + 1;
 
-        return new Potion(uses, power, effectType, rarity);
+        return new Potion(uses, power, type, rarity);
     }
 
     Spell generateRandomSpell(Rarity rarity)

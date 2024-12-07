@@ -10,10 +10,10 @@ public class Weapon extends Item
 
     public String toString()
     {
-        return String.format("%s Weapon Type: %s | Rarity: %s | Damage: %.2f | Uses: %d",
+        return String.format("%s %s %s | Damage: %.2f | Uses: %d",
                              icon,
+                             Color.color(rarity.name, rarity.color),
                              name,
-                             rarity,
                              damage,
                              uses);
     }
