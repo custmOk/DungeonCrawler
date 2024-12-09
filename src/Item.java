@@ -44,7 +44,7 @@ public class Item
             case LEGENDARY ->
             {
                 minPrice = 150;
-                maxPrice = 175;
+                maxPrice = 200;
             }
         }
 

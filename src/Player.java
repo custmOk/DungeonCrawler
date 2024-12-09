@@ -1,4 +1,3 @@
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -19,7 +18,7 @@ public class Player
     private double MAX_HEALTH;
     private double MAX_MANA;
 
-    public Player(Dungeon dungeon) throws IOException
+    public Player(Dungeon dungeon)
     {
         inventory = new ArrayList<>();
         this.dungeon = dungeon;
@@ -120,17 +119,17 @@ public class Player
 
     public void health()
     {
-        System.out.printf("\uD83D\uDC96 Player health: %.2f/%.2f%n", health, MAX_HEALTH);
+        System.out.printf("❤️ Player health: %.2f / %.2f%n", health, MAX_HEALTH);
     }
 
     public void mana()
     {
-        System.out.printf("\uD83E\uDE84 Player mana: %.2f/%.2f%n", mana, MAX_MANA);
+        System.out.printf("\uD83E\uDE84 Player mana: %.2f / %.2f%n", mana, MAX_MANA);
     }
 
     public void durability()
     {
-        System.out.printf("\uD83D\uDD2A Weapon uses: %d/%d%n", equipped.uses, equipped.maxUses);
+        System.out.printf("\uD83D\uDD2A Weapon uses: %d / %d%n", equipped.uses, equipped.maxUses);
     }
 
     public void status()
@@ -142,7 +141,7 @@ public class Player
     public void player()
     {
         classInfo();
-        System.out.printf("Element Affinity: %s %s%n", affinity.icon, Color.color(affinity.name, affinity.color));
+        System.out.printf("Element Affinity: %s %s%n", affinity.icon, affinity);
     }
 
     public void classInfo()
@@ -150,13 +149,7 @@ public class Player
         System.out.printf("Selected Class: %s%nStats:%n\tStrength - %d%n\tDefense - %d%n\tDexterity - %d%n" +
                                   "\tAgility - %d%n\tIntelligence - %d%n\tHealth Points - %d%n" + "\tLuck - " + "%d%n"
                                   + "\tMagic Attack - %d%n\tMagic Defense - %d%n",
-                          cls == Class.WARRIOR ?
-                                  Color.color("Warrior", Color.RED) :
-                                  cls == Class.THIEF ?
-                                          Color.color("Thief", Color.BLUE) :
-                                          cls == Class.MAGE ?
-                                                  Color.color("Mage", Color.MAGENTA) :
-                                                  Color.color("Ranger", Color.GREEN),
+                          cls,
                           cls.STR,
                           cls.DEF,
                           cls.DEX,
@@ -325,13 +318,11 @@ public class Player
                     {
                         hit = true;
                         double baseChange = spell.damage * levelScaleStrDefHpIntMatMdf(cls.MAT);
-                        String effectiveness = switch (monster.element)
-                        {
-                            case FIRE, WATER, NATURE -> spell.element.name.equals(monster.element.name) ?
-                                    "normal" :
-                                    spell.element.strong.equals(monster.element.name) ? "strengthened" : "weakened";
-                            case null -> "boosted";
-                        };
+                        String effectiveness = monster.element == null ?
+                                "boosted" :
+                                spell.element.name.equals(monster.element.name) ?
+                                        "normal" :
+                                        spell.element.strong.equals(monster.element.name) ? "strengthened" : "weakened";
                         double changeFactor = switch (effectiveness)
                         {
                             case "strengthened" -> 2;
@@ -469,13 +460,11 @@ public class Player
     {
         for (Monster monster : dungeon.currentRoom.monsters)
         {
-            String effectiveness = switch (monster.element)
-            {
-                case FIRE, WATER, NATURE -> affinity.name.equals(monster.element.name) ?
-                        "normal" :
-                        affinity.weak.equals(monster.element.name) ? "strengthened" : "weakened";
-                case null -> "normal";
-            };
+            String effectiveness = monster.element == null ?
+                    "normal" :
+                    affinity.name.equals(monster.element.name) ?
+                            "normal" :
+                            affinity.weak.equals(monster.element.name) ? "strengthened" : "weakened";
             double affinityScaling = switch (effectiveness)
             {
                 case "strengthened" -> 2;

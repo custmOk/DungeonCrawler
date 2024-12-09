@@ -1,8 +1,11 @@
 public enum Element
 {
     FIRE("Fire", Color.RED, "Nature", "Water", "\uD83D\uDD25"),
-    WATER("Water", Color.CYAN, "Fire", "Nature", "\uD83D\uDCA7"),
-    NATURE("Nature", Color.GREEN, "Water", "Fire", "\uD83C\uDF3B");
+    WATER("Water", Color.BLUE, "Fire", "Electric", "\uD83D\uDCA7"),
+    NATURE("Nature", Color.GREEN, "Wind", "Fire", "\uD83C\uDF3B"),
+    ELECTRIC("Electric", Color.YELLOW, "Water", "Wind", "\uD83C\uDF29️"),
+    ICE("Ice", Color.CYAN, "Nature", "Fire", "\uD83E\uDDCA"),
+    WIND("Wind", Color.WHITE, "Ice", "Electric", "\uD83C\uDF2A️");
 
     final String name, strong, weak, icon;
     final Color color;
@@ -14,5 +17,10 @@ public enum Element
         this.strong = strong;
         this.weak = weak;
         this.icon = icon;
+    }
+
+    public String toString()
+    {
+        return Color.color(name, color);
     }
 }

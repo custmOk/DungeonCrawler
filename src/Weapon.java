@@ -12,7 +12,7 @@ public class Weapon extends Item
     {
         return String.format("%s %s %s | Damage: %.2f | Uses: %d",
                              icon,
-                             Color.color(rarity.name, rarity.color),
+                             rarity,
                              name,
                              damage,
                              uses);

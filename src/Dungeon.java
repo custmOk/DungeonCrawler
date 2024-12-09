@@ -1,8 +1,4 @@
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 import java.io.*;
 
 public class Dungeon
@@ -163,9 +159,11 @@ public class Dungeon
         return dungeonFile;
     }
 
-    Weapon generateRandomWeapon(Rarity rarity) throws IOException
+    Weapon generateRandomWeapon(Rarity rarity)
     {
-        List<String> weaponTypes = Files.readAllLines(new File("weapons.txt").toPath());
+        InputStream is = getClass().getClassLoader().getResourceAsStream("weapons.txt");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(is)));
+        List<String> weaponTypes = reader.lines().toList();
 
         String weaponType = weaponTypes.get(rand.nextInt(weaponTypes.size()));
         double damage = switch (rarity)
@@ -215,9 +213,11 @@ public class Dungeon
         return new Spell(manaCost, damage, generateRandomElement(), rarity);
     }
 
-    Monster generateRandomMonster(Rarity rarity) throws IOException
+    Monster generateRandomMonster(Rarity rarity)
     {
-        List<String> monsterTypes = Files.readAllLines(new File("monsters.txt").toPath());
+        InputStream is = getClass().getClassLoader().getResourceAsStream("monsters.txt");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(is)));
+        List<String> monsterTypes = reader.lines().toList();
 
         String monsterType = monsterTypes.get(rand.nextInt(monsterTypes.size()));
 
@@ -236,12 +236,15 @@ public class Dungeon
 
     private Element generateRandomElement()
     {
-        int num = rand.nextInt(3);
+        int num = rand.nextInt(6);
         return switch (num)
         {
             case 0 -> Element.FIRE;
             case 1 -> Element.WATER;
-            default -> Element.NATURE;
+            case 2 -> Element.NATURE;
+            case 3 -> Element.ELECTRIC;
+            case 4 -> Element.ICE;
+            default -> Element.WIND;
         };
     }
 

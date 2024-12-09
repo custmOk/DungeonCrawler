@@ -17,7 +17,7 @@ public class Potion extends Item
     {
         return String.format("%s %s %s | Power: %.2f | Uses: %d",
                              icon,
-                             Color.color(rarity.name, rarity.color),
+                             rarity,
                              type.name,
                              power,
                              uses);

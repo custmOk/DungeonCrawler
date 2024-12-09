@@ -14,4 +14,9 @@ public enum Rarity
         this.name = name;
         this.color = color;
     }
+
+    public String toString()
+    {
+        return Color.color(name, color);
+    }
 }

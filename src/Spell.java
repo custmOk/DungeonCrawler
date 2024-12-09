@@ -16,7 +16,7 @@ public class Spell extends Item
     {
         return String.format("%s %s %s | Damage: %.2f | Mana Cost: %d",
                              icon,
-                             Color.color(rarity.name, rarity.color),
+                             rarity,
                              name,
                              damage,
                              manaCost);

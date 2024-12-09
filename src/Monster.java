@@ -25,8 +25,8 @@ public class Monster
     {
         return String.format("%s %s %s%s | Health: %.2f | " + weapon,
                              icon,
-                             Color.color(rarity.name, rarity.color),
-                             element == null ? "" : (Color.color(element.name, element.color) + " "),
+                             rarity,
+                             element == null ? "" : (element + " "),
                              type,
                              health);
     }

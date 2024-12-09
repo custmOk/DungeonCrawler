@@ -37,7 +37,7 @@ public class DungeonRunner
         else Color.logError("invalid input");
     }
 
-    private static void startEventLoop() throws IOException
+    private static void startEventLoop()
     {
         Player player = new Player(dungeon);
         Scanner sc = new Scanner(System.in);
@@ -68,17 +68,17 @@ public class DungeonRunner
                                       - High Stats: HP
                                       - Low Stats: MDF, DEX, AGI
                                       - Lowest Stats: MAT, LCK, INT
-                                  👤 %s
+                                  🥷 %s
                                       - Highest Stats: DEX, AGI
                                       - High Stats: MAT, LCK
                                       - Low Stats: HP, STR, INT
                                       - Lowest Stats: DEF, MDF
-                                  👸 %s
+                                  🧙 %s
                                       - Highest Stats: INT, MAT, MDF
                                       - High Stats: HP
                                       - Low Stats: LCK, DEX
                                       - Lowest Stats: STR, AGI, DEF
-                                  👰 %s
+                                  🧝 %s
                                       - Highest Stats: LCK, AGI
                                       - High Stats: DEX, INT
                                       - Low Stats: DEF, HP, MAT
@@ -139,16 +139,37 @@ public class DungeonRunner
         System.out.printf("""
                                   Select Element Affinity
                                   
-                                  %s Fire
-                                  %s Water
-                                  %s Nature
-                                  %n""", Element.FIRE.icon, Element.WATER.icon, Element.NATURE.icon);
+                                  %s %s
+                                  %s %s
+                                  %s %s
+                                  %s %s
+                                  %s %s
+                                  %s %s
+                                  %n""",
+                          Element.FIRE.icon,
+                          Element.FIRE,
+                          Element.WATER.icon,
+                          Element.WATER,
+                          Element.NATURE.icon,
+                          Element.NATURE,
+                          Element.ELECTRIC.icon,
+                          Element.ELECTRIC,
+                          Element.ICE.icon,
+                          Element.ICE,
+                          Element.WIND.icon,
+                          Element.WIND);
 
         boolean affinitySelected = false;
 
         while (!affinitySelected)
         {
-            System.out.print("Enter affinity selection (Fire, Water, Nature): ");
+            System.out.printf("Enter affinity selection (%s, %s, %s, %s, %s, %s): ",
+                              Element.FIRE,
+                              Element.WATER,
+                              Element.NATURE,
+                              Element.ELECTRIC,
+                              Element.ICE,
+                              Element.WIND);
             String choice = sc.nextLine();
 
             switch (choice.toLowerCase())
@@ -156,6 +177,9 @@ public class DungeonRunner
                 case "fire" -> player.affinity = Element.FIRE;
                 case "water" -> player.affinity = Element.WATER;
                 case "nature" -> player.affinity = Element.NATURE;
+                case "electric" -> player.affinity = Element.ELECTRIC;
+                case "ice" -> player.affinity = Element.ICE;
+                case "wind" -> player.affinity = Element.WIND;
                 default ->
                 {
                     Color.logError("invalid choice");
@@ -210,7 +234,11 @@ public class DungeonRunner
                                        Color.color("🔸 Shop", Color.YELLOW)),
                               tableRow("🧭 [WASD]", "💰 pouch", "📄 contents", "🎒 inventory", "💵 shop"),
                               tableRow("🌎 map", "📊 status", "🔍 examine monster #", "📕 inventory #", "💴 shop #"),
-                              tableRow("🏃 escape", "💁 player", "🔎 examine item #", "👋 use #", "💶 shop buy #"),
+                              tableRow("🏃 escape",
+                                       "\uD83E\uDEAA player",
+                                       "🔎 examine item #",
+                                       "👋 use #",
+                                       "💶 shop buy #"),
                               tableRow("📋 descriptions",
                                        "\uD83D\uDD39",
                                        "📂 take #",
