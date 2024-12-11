@@ -1,7 +1,7 @@
 public enum Class
 {
     WARRIOR("Warrior",
-            Color.RED,
+            TerminalColor.RED,
             Level.HIGHEST,
             Level.HIGHEST,
             Level.LOW,
@@ -12,7 +12,7 @@ public enum Class
             Level.LOWEST,
             Level.LOW),
     THIEF("Thief",
-          Color.BLUE,
+          TerminalColor.BLUE,
           Level.LOW,
           Level.LOWEST,
           Level.HIGHEST,
@@ -23,7 +23,7 @@ public enum Class
           Level.HIGH,
           Level.LOWEST),
     MAGE("Mage",
-         Color.MAGENTA,
+         TerminalColor.MAGENTA,
          Level.LOWEST,
          Level.LOWEST,
          Level.LOW,
@@ -34,7 +34,7 @@ public enum Class
          Level.HIGHEST,
          Level.HIGHEST),
     RANGER("Ranger",
-           Color.GREEN,
+           TerminalColor.GREEN,
            Level.LOWEST,
            Level.LOW,
            Level.HIGH,
@@ -46,10 +46,10 @@ public enum Class
            Level.LOWEST);
 
     final String name;
-    final Color color;
+    final TerminalColor color;
     final int STR, DEF, DEX, AGI, INT, HP, LCK, MAT, MDF;
 
-    Class(String name, Color color, Level STR, Level DEF, Level DEX, Level AGI, Level INT, Level HP, Level LCK,
+    Class(String name, TerminalColor color, Level STR, Level DEF, Level DEX, Level AGI, Level INT, Level HP, Level LCK,
           Level MAT, Level MDF)
     {
         this.name = name;
@@ -67,6 +67,6 @@ public enum Class
 
     public String toString()
     {
-        return Color.color(name, color);
+        return TerminalColor.color(name, color);
     }
 }

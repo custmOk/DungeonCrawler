@@ -1,4 +1,4 @@
-public enum Color
+public enum TerminalColor
 {
     //Color end string, color reset
     RESET("\033[0m"),
@@ -75,7 +75,7 @@ public enum Color
 
     private final String code;
 
-    Color(String code)
+    TerminalColor(String code)
     {
         this.code = code;
     }
@@ -90,7 +90,7 @@ public enum Color
         return RED + text + RESET;
     }
 
-    public static String color(String text, Color color)
+    public static String color(String text, TerminalColor color)
     {
         return color + text + RESET;
     }

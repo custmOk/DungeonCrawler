@@ -1,16 +1,16 @@
 public enum Element
 {
-    FIRE("Fire", Color.RED, "Nature", "Water", "\uD83D\uDD25"),
-    WATER("Water", Color.BLUE, "Fire", "Electric", "\uD83D\uDCA7"),
-    NATURE("Nature", Color.GREEN, "Wind", "Fire", "\uD83C\uDF3B"),
-    ELECTRIC("Electric", Color.YELLOW, "Water", "Wind", "\uD83C\uDF29️"),
-    ICE("Ice", Color.CYAN, "Nature", "Fire", "\uD83E\uDDCA"),
-    WIND("Wind", Color.WHITE, "Ice", "Electric", "\uD83C\uDF2A️");
+    FIRE("Fire", TerminalColor.RED, "Nature", "Water", "\uD83D\uDD25"),
+    WATER("Water", TerminalColor.BLUE, "Fire", "Electric", "\uD83D\uDCA7"),
+    NATURE("Nature", TerminalColor.GREEN, "Wind", "Fire", "\uD83C\uDF3B"),
+    ELECTRIC("Electric", TerminalColor.YELLOW, "Water", "Wind", "\uD83C\uDF29️"),
+    ICE("Ice", TerminalColor.CYAN, "Nature", "Fire", "\uD83E\uDDCA"),
+    WIND("Wind", TerminalColor.WHITE, "Ice", "Electric", "\uD83C\uDF2A️");
 
     final String name, strong, weak, icon;
-    final Color color;
+    final TerminalColor color;
 
-    Element(String name, Color color, String strong, String weak, String icon)
+    Element(String name, TerminalColor color, String strong, String weak, String icon)
     {
         this.name = name;
         this.color = color;
@@ -21,6 +21,6 @@ public enum Element
 
     public String toString()
     {
-        return Color.color(name, color);
+        return TerminalColor.color(name, color);
     }
 }

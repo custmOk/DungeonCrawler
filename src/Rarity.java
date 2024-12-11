@@ -1,15 +1,15 @@
 public enum Rarity
 {
-    COMMON("Common", Color.WHITE),
-    UNCOMMON("Uncommon", Color.GREEN),
-    RARE("Rare", Color.BLUE),
-    EPIC("Epic", Color.MAGENTA),
-    LEGENDARY("Legendary", Color.YELLOW);
+    COMMON("Common", TerminalColor.WHITE),
+    UNCOMMON("Uncommon", TerminalColor.GREEN),
+    RARE("Rare", TerminalColor.BLUE),
+    EPIC("Epic", TerminalColor.MAGENTA),
+    LEGENDARY("Legendary", TerminalColor.YELLOW);
 
     final String name;
-    final Color color;
+    final TerminalColor color;
 
-    Rarity(String name, Color color)
+    Rarity(String name, TerminalColor color)
     {
         this.name = name;
         this.color = color;
@@ -17,6 +17,6 @@ public enum Rarity
 
     public String toString()
     {
-        return Color.color(name, color);
+        return TerminalColor.color(name, color);
     }
 }

@@ -82,7 +82,7 @@ public class Player
             prevRoom.updateStatus();
             dungeon.currentRoom.updateStatus();
         }
-        else Color.logError("invalid move");
+        else TerminalColor.logError("invalid move");
 
         if (!dead)
         {
@@ -168,19 +168,19 @@ public class Player
 
     public void examineMonster(int index)
     {
-        if (index < 0 || index >= dungeon.currentRoom.monsters.size()) Color.logError("invalid index");
+        if (index < 0 || index >= dungeon.currentRoom.monsters.size()) TerminalColor.logError("invalid index");
         else System.out.println(dungeon.currentRoom.monsters.get(index));
     }
 
     public void examineItem(int index)
     {
-        if (index < 0 || index >= dungeon.currentRoom.items.size()) Color.logError("invalid index");
+        if (index < 0 || index >= dungeon.currentRoom.items.size()) TerminalColor.logError("invalid index");
         else System.out.println(dungeon.currentRoom.items.get(index));
     }
 
     public void take(int index)
     {
-        if (index < 0 || index >= dungeon.currentRoom.items.size()) Color.logError("invalid index");
+        if (index < 0 || index >= dungeon.currentRoom.items.size()) TerminalColor.logError("invalid index");
         else
         {
             Item item = dungeon.currentRoom.items.remove(index);
@@ -193,7 +193,7 @@ public class Player
 
     public void inventory(int index)
     {
-        if (index < 0 || index >= inventory.size()) Color.logError("invalid index");
+        if (index < 0 || index >= inventory.size()) TerminalColor.logError("invalid index");
         else System.out.println(inventory.get(index));
         System.out.println();
     }
@@ -210,7 +210,7 @@ public class Player
 
     public void use(int index)
     {
-        if (index < 0 || index >= inventory.size()) Color.logError("invalid index");
+        if (index < 0 || index >= inventory.size()) TerminalColor.logError("invalid index");
         else if (inventory.get(index) instanceof Weapon weapon)
         {
             equipped = weapon;
@@ -279,7 +279,7 @@ public class Player
 
     public void attack(int index)
     {
-        if (index < 0 || index >= dungeon.currentRoom.monsters.size()) Color.logError("invalid index");
+        if (index < 0 || index >= dungeon.currentRoom.monsters.size()) TerminalColor.logError("invalid index");
         else
         {
             Monster monster = dungeon.currentRoom.monsters.get(index);
@@ -301,7 +301,7 @@ public class Player
                     System.out.printf("\uD83D\uDCA5 You hit %s for %.2f%s damage%n",
                                       monster.type,
                                       changeBy,
-                                      isCritical ? " " + Color.critical("critical") : "");
+                                      isCritical ? " " + TerminalColor.critical("critical") : "");
                     if (weapon.uses == 1) System.out.printf("%s has one more use%n", weapon.getInfo());
                     if (weapon.uses <= 0)
                     {
@@ -394,7 +394,7 @@ public class Player
         if (dungeon.currentRoom.type == RoomType.SHOP)
         {
             Shop room = (Shop) dungeon.currentRoom;
-            if (index < 0 || index >= room.contents.size()) Color.logError("invalid index");
+            if (index < 0 || index >= room.contents.size()) TerminalColor.logError("invalid index");
             else
             {
                 Item item = room.contents.get(index);
@@ -416,7 +416,7 @@ public class Player
     {
         if (dungeon.currentRoom.type == RoomType.SHOP)
         {
-            if (index < 0 || index >= inventory.size()) Color.logError("invalid index");
+            if (index < 0 || index >= inventory.size()) TerminalColor.logError("invalid index");
             else
             {
                 Item item = inventory.get(index);

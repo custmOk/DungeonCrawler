@@ -9,6 +9,11 @@ public class DungeonRunner
 
     public static void main(String[] args) throws IOException
     {
+        start();
+    }
+
+    private static void start() throws IOException
+    {
         Scanner sc = new Scanner(System.in);
         System.out.print("generate or load: ");
         String choice = sc.next();
@@ -23,7 +28,7 @@ public class DungeonRunner
             System.out.print("enter file name: ");
             String fileName = sc.nextInt() + ".txt";
             File file = new File(fileName);
-            if (!file.exists()) Color.logError("file not found");
+            if (!file.exists()) TerminalColor.logError("file not found");
             else
             {
                 System.out.println("loading " + fileName);
@@ -34,7 +39,7 @@ public class DungeonRunner
                 startEventLoop();
             }
         }
-        else Color.logError("invalid input");
+        else TerminalColor.logError("invalid input");
     }
 
     private static void startEventLoop()
@@ -84,20 +89,20 @@ public class DungeonRunner
                                       - Low Stats: DEF, HP, MAT
                                       - Lowest Stats: MDF, STR
                                   %n""",
-                          Color.color("Warrior", Color.RED),
-                          Color.color("Thief", Color.BLUE),
-                          Color.color("Mage", Color.MAGENTA),
-                          Color.color("Ranger", Color.GREEN));
+                          TerminalColor.color("Warrior", TerminalColor.RED),
+                          TerminalColor.color("Thief", TerminalColor.BLUE),
+                          TerminalColor.color("Mage", TerminalColor.MAGENTA),
+                          TerminalColor.color("Ranger", TerminalColor.GREEN));
 
         boolean classSelected = false;
 
         while (!classSelected)
         {
             System.out.printf("Enter class selection (%s, %s, %s, %s): ",
-                              Color.color("Warrior", Color.RED),
-                              Color.color("Thief", Color.BLUE),
-                              Color.color("Mage", Color.MAGENTA),
-                              Color.color("Ranger", Color.GREEN));
+                              TerminalColor.color("Warrior", TerminalColor.RED),
+                              TerminalColor.color("Thief", TerminalColor.BLUE),
+                              TerminalColor.color("Mage", TerminalColor.MAGENTA),
+                              TerminalColor.color("Ranger", TerminalColor.GREEN));
             String choice = sc.nextLine();
 
             switch (choice.toLowerCase())
@@ -108,7 +113,7 @@ public class DungeonRunner
                 case "ranger" -> player.selectClass(Class.RANGER);
                 default ->
                 {
-                    Color.logError("invalid choice");
+                    TerminalColor.logError("invalid choice");
                     continue;
                 }
             }
@@ -130,7 +135,7 @@ public class DungeonRunner
                     System.out.println("Restarting class selection.");
                     confirmed = true;
                 }
-                else Color.logError("invalid input");
+                else TerminalColor.logError("invalid input");
             }
         }
 
@@ -182,7 +187,7 @@ public class DungeonRunner
                 case "wind" -> player.affinity = Element.WIND;
                 default ->
                 {
-                    Color.logError("invalid choice");
+                    TerminalColor.logError("invalid choice");
                     continue;
                 }
             }
@@ -202,7 +207,7 @@ public class DungeonRunner
                     System.out.println("Restarting affinity selection.");
                     confirmed = true;
                 }
-                else Color.logError("invalid input");
+                else TerminalColor.logError("invalid input");
             }
         }
 
@@ -227,11 +232,11 @@ public class DungeonRunner
                                       %s
                                       """,
                               tableDivider(0),
-                              tableRow(Color.color("🔸 General", Color.YELLOW),
-                                       Color.color("🔸 Information", Color.YELLOW),
-                                       Color.color("🔸 Room", Color.YELLOW),
-                                       Color.color("🔸 Player", Color.YELLOW),
-                                       Color.color("🔸 Shop", Color.YELLOW)),
+                              tableRow(TerminalColor.color("🔸 General", TerminalColor.YELLOW),
+                                       TerminalColor.color("🔸 Information", TerminalColor.YELLOW),
+                                       TerminalColor.color("🔸 Room", TerminalColor.YELLOW),
+                                       TerminalColor.color("🔸 Player", TerminalColor.YELLOW),
+                                       TerminalColor.color("🔸 Shop", TerminalColor.YELLOW)),
                               tableRow("🧭 [WASD]", "💰 pouch", "📄 contents", "🎒 inventory", "💵 shop"),
                               tableRow("🌎 map", "📊 status", "🔍 examine monster #", "📕 inventory #", "💴 shop #"),
                               tableRow("🏃 escape",
@@ -297,7 +302,7 @@ public class DungeonRunner
                                                                   shop buy # - buys item at index #
                                                                   shop sell # - sells item from inventory for half price at index #
                                                                   escape - escapes the dungeon if in starting room""");
-                default -> Color.logError("illegal action");
+                default -> TerminalColor.logError("illegal action");
             }
 
             System.out.println();
@@ -309,7 +314,7 @@ public class DungeonRunner
     {
         if (actions.length < 3)
         {
-            Color.logError("illegal input");
+            TerminalColor.logError("illegal input");
             return;
         }
         try
@@ -319,12 +324,12 @@ public class DungeonRunner
             {
                 case "monster" -> player.examineMonster(index);
                 case "item" -> player.examineItem(index);
-                default -> Color.logError("illegal input");
+                default -> TerminalColor.logError("illegal input");
             }
         }
         catch (NumberFormatException e)
         {
-            Color.logError("illegal input");
+            TerminalColor.logError("illegal input");
         }
     }
 
@@ -332,7 +337,7 @@ public class DungeonRunner
     {
         if (actions.length < 3)
         {
-            Color.logError("illegal input");
+            TerminalColor.logError("illegal input");
             return;
         }
         try
@@ -342,12 +347,12 @@ public class DungeonRunner
             {
                 case "buy" -> player.buy(index);
                 case "sell" -> player.sell(index);
-                default -> Color.logError("illegal input");
+                default -> TerminalColor.logError("illegal input");
             }
         }
         catch (NumberFormatException e)
         {
-            Color.logError("illegal input");
+            TerminalColor.logError("illegal input");
         }
     }
 
@@ -355,7 +360,7 @@ public class DungeonRunner
     {
         if (actions.length < 2)
         {
-            Color.logError("illegal input");
+            TerminalColor.logError("illegal input");
             return;
         }
         try
@@ -365,7 +370,7 @@ public class DungeonRunner
         }
         catch (NumberFormatException e)
         {
-            Color.logError("illegal input");
+            TerminalColor.logError("illegal input");
         }
     }
 
