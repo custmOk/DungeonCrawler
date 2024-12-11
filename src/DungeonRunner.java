@@ -15,31 +15,37 @@ public class DungeonRunner
     private static void start() throws IOException
     {
         Scanner sc = new Scanner(System.in);
-        System.out.print("generate or load: ");
-        String choice = sc.next();
-        if (choice.equalsIgnoreCase("generate"))
+        boolean run = true;
+        while (run)
         {
-            dungeon = new Dungeon();
-
-            startEventLoop();
-        }
-        else if (choice.equalsIgnoreCase("load"))
-        {
-            System.out.print("enter file name: ");
-            String fileName = sc.nextInt() + ".txt";
-            File file = new File(fileName);
-            if (!file.exists()) TerminalColor.logError("file not found");
-            else
+            System.out.print("generate or load: ");
+            String choice = sc.next();
+            if (choice.equalsIgnoreCase("generate"))
             {
-                System.out.println("loading " + fileName);
-                Scanner fileScanner = new Scanner(file);
-                long seed = fileScanner.nextLong();
-                dungeon = new Dungeon(seed);
+                dungeon = new Dungeon();
+                run = false;
 
                 startEventLoop();
             }
+            else if (choice.equalsIgnoreCase("load"))
+            {
+                System.out.print("enter file name: ");
+                String fileName = sc.nextInt() + ".txt";
+                File file = new File(fileName);
+                if (!file.exists()) TerminalColor.logError("file not found");
+                else
+                {
+                    System.out.println("loading " + fileName);
+                    Scanner fileScanner = new Scanner(file);
+                    long seed = fileScanner.nextLong();
+                    dungeon = new Dungeon(seed);
+                    run = false;
+
+                    startEventLoop();
+                }
+            }
+            else TerminalColor.logError("invalid input");
         }
-        else TerminalColor.logError("invalid input");
     }
 
     private static void startEventLoop()
@@ -52,7 +58,7 @@ public class DungeonRunner
                                  Welcome to the Dungeon!
                                  
                                  Dungeon Map Legend
-                                 ⬛ - Wall
+                                 \uD83E\uDDF1 - Wall
                                  \uD83C\uDFE0 - Start and Exit Room
                                  \uD83D\uDC6E - Your Current Room
                                  \uD83C\uDFEA - Shop/Store Room
@@ -308,6 +314,9 @@ public class DungeonRunner
             System.out.println();
             if (player.dead) quit = true;
         }
+
+        System.out.print("Enter to leave");
+        sc.nextLine();
     }
 
     private static void handleExamine(Player player, String[] actions)
@@ -383,7 +392,7 @@ public class DungeonRunner
 
     private static String tableRow(String col1, String col2, String col3, String col4, String col5)
     {
-        return String.format("   │ %-20s    │ %-20s    │ %-20s    │ %-20s    │ %-20s    │",
+        return String.format("▪️│ %-21s │ %-21s │ %-21s │ %-21s │ %-21s │",
                              pad(col1),
                              pad(col2),
                              pad(col3),
@@ -406,7 +415,7 @@ public class DungeonRunner
     private static String pad(String text)
     {
         String plainText = text.replaceAll("\u001B\\[[;\\d]*m", "");
-        int padding = 20 - plainText.length();
+        int padding = 20 - plainText.length() + 1;
         return text + " ".repeat(Math.max(0, padding));
     }
 }

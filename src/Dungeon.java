@@ -252,15 +252,15 @@ public class Dungeon
     {
         StringBuilder sb = new StringBuilder();
         sb.append(seed).append("\n");
-        sb.append("⬛".repeat(SIZE + 2)).append("\n");
+        sb.append("\uD83E\uDDF1".repeat(SIZE + 2)).append("\n");
         for (Room[] row : dungeon)
         {
-            sb.append("⬛");
+            sb.append("\uD83E\uDDF1");
             for (Room room : row)
                 sb.append(room);
-            sb.append("⬛").append("\n");
+            sb.append("\uD83E\uDDF1").append("\n");
         }
-        sb.append("⬛".repeat(SIZE + 2)).append("\n");
+        sb.append("\uD83E\uDDF1".repeat(SIZE + 2)).append("\n");
         return sb.toString();
     }
 }

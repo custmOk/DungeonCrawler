@@ -4,7 +4,7 @@ import java.util.stream.IntStream;
 
 public class Room
 {
-    final String WALL = "⬛";
+    final String WALL = "\uD83E\uDDF1";
     final String START = "\uD83C\uDFE0";
     final String PLAYER = "\uD83D\uDC6E";
     final String SHOP = "\uD83C\uDFEA";
