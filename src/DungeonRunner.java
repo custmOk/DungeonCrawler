@@ -64,6 +64,8 @@ public class DungeonRunner
                                  \uD83C\uDFE0 - Start and Exit Room
                                  \uD83D\uDC6E - Your Current Room
                                  \uD83C\uDFEA - Shop/Store Room
+                                 \uD83D\uDC7F - Mini Boss Room
+                                 \uD83D\uDC7A - Boss Room
                                  \uD83D\uDC80 - Monsters in Room (can have items)
                                  \uD83C\uDFF9 - Items in Room (no monsters)
                                  \uD83D\uDEA9 - No Monsters or Items in Room
