@@ -27,7 +27,7 @@ public class Dungeon
         createDungeon();
     }
 
-    public Dungeon(long seed) throws IOException
+    public Dungeon(long seed)
     {
         for (int i = 0; i < SIZE; i++)
             for (int j = 0; j < SIZE; j++)
@@ -38,11 +38,15 @@ public class Dungeon
         constructDungeon();
     }
 
-    private void constructDungeon() throws IOException
+    private void constructDungeon()
     {
         int roomsOpen = 0;
-        int shopsOpened = 0;
+        int shops = 0;
         int maxShops = 1;
+        int miniBosses = 0;
+        int maxMiniBosses = 3;
+        int bosses = 0;
+        int maxBosses = 1;
         int row = rand.nextInt(SIZE);
         int col = rand.nextInt(SIZE);
 
@@ -72,8 +76,13 @@ public class Dungeon
             }
             if (!dungeon[row][col].getOpen())
             {
-                boolean isShop =
-                        shopsOpened < maxShops && rand.nextDouble() < 0.1 || targetRooms - roomsOpen <= maxShops - shopsOpened;
+                int roomsRequired = (maxShops - shops) + (maxMiniBosses - miniBosses) + (maxBosses - bosses);
+                boolean isShop = shops < maxShops && rand.nextDouble() < 0.1 ||
+                        targetRooms - roomsOpen <= roomsRequired;
+                boolean isMiniBoss = !isShop && miniBosses < maxMiniBosses && rand.nextDouble() < 0.1 ||
+                        targetRooms - roomsOpen <= roomsRequired;
+                boolean isBoss = !isShop && !isMiniBoss && bosses < maxBosses && rand.nextDouble() < 0.1 ||
+                        targetRooms - roomsOpen <= roomsRequired;
 
                 if (isShop)
                 {
@@ -83,7 +92,56 @@ public class Dungeon
                                                  dungeon[row][col].col,
                                                  this);
                     dungeon[row][col].type = RoomType.SHOP;
-                    shopsOpened++;
+                    shops++;
+                }
+                else if (isMiniBoss)
+                {
+                    dungeon[row][col] = new MiniBoss(true,
+                                                     dungeon[row][col].number,
+                                                     dungeon[row][col].row,
+                                                     dungeon[row][col].col,
+                                                     this);
+                    dungeon[row][col].type = RoomType.MINI_BOSS;
+                    for (int i = 0; i < rand.nextInt(2); i++)
+                    {
+                        dungeon[row][col].addItem(rand.nextBoolean() ?
+                                                          generateRandomWeapon(Rarity.EPIC) :
+                                                          generateRandomPotion(Rarity.EPIC));
+                    }
+                    for (int i = 0; i < rand.nextInt(3); i++)
+                    {
+                        double chance = rand.nextDouble();
+                        Rarity rarity;
+                        if (chance < 0.3) rarity = Rarity.COMMON;
+                        else if (chance < 0.8) rarity = Rarity.UNCOMMON;
+                        else rarity = Rarity.RARE;
+                        dungeon[row][col].addMonster(generateRandomMonster(rarity));
+                    }
+                    dungeon[row][col].addMonster(generateRandomMonster(Rarity.EPIC));
+                    miniBosses++;
+                }
+                else if (isBoss)
+                {
+                    dungeon[row][col] = new Boss(true,
+                                                 dungeon[row][col].number,
+                                                 dungeon[row][col].row,
+                                                 dungeon[row][col].col,
+                                                 this);
+                    dungeon[row][col].type = RoomType.BOSS;
+                    dungeon[row][col].addItem(rand.nextBoolean() ?
+                                                      generateRandomWeapon(Rarity.LEGENDARY) :
+                                                      generateRandomPotion(Rarity.LEGENDARY));
+                    for (int i = 0; i < rand.nextInt(2); i++)
+                    {
+                        double chance = rand.nextDouble();
+                        Rarity rarity;
+                        if (chance < 0.6) rarity = Rarity.UNCOMMON;
+                        else if (chance < 0.9) rarity = Rarity.RARE;
+                        else rarity = Rarity.EPIC;
+                        dungeon[row][col].addMonster(generateRandomMonster(rarity));
+                    }
+                    dungeon[row][col].addMonster(generateRandomMonster(Rarity.LEGENDARY));
+                    bosses++;
                 }
                 else
                 {
@@ -101,7 +159,7 @@ public class Dungeon
                                                           generateRandomWeapon(rarity) :
                                                           generateRandomPotion(rarity));
                     }
-                    for (int i = 0; i < rand.nextInt(4); i++)
+                    for (int i = 0; i < rand.nextInt(5); i++)
                     {
                         double chance = rand.nextDouble();
                         Rarity rarity;
@@ -171,7 +229,8 @@ public class Dungeon
             case COMMON -> rand.nextDouble(4) + 1;
             case UNCOMMON -> rand.nextDouble(5) + 5;
             case RARE -> rand.nextDouble(5) + 10;
-            default -> 0;
+            case EPIC -> rand.nextDouble(5) + 15;
+            case LEGENDARY -> rand.nextDouble(5) + 20;
         };
         int durability = rand.nextInt(21) + 10;
 
@@ -180,7 +239,7 @@ public class Dungeon
 
     Potion generateRandomPotion(Rarity rarity)
     {
-        PotionType type = switch(rand.nextInt(3))
+        PotionType type = switch (rand.nextInt(3))
         {
             case 0 -> PotionType.HEALING;
             case 1 -> PotionType.REPAIRING;
@@ -192,7 +251,8 @@ public class Dungeon
             case COMMON -> rand.nextDouble(5) + 5;
             case UNCOMMON -> rand.nextDouble(5) + 10;
             case RARE -> rand.nextDouble(5) + 15;
-            default -> 0;
+            case EPIC -> rand.nextDouble(5) + 20;
+            case LEGENDARY -> rand.nextDouble(5) + 25;
         };
         int uses = rand.nextInt(5) + 1;
 
@@ -206,7 +266,8 @@ public class Dungeon
             case COMMON -> rand.nextDouble(4) + 1;
             case UNCOMMON -> rand.nextDouble(5) + 5;
             case RARE -> rand.nextDouble(5) + 10;
-            default -> 0;
+            case EPIC -> rand.nextDouble(5) + 15;
+            case LEGENDARY -> rand.nextDouble(5) + 20;
         };
         int manaCost = rand.nextInt(8) + 3;
 

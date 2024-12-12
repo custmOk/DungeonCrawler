@@ -1,4 +1,3 @@
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -7,7 +6,7 @@ public class Shop extends Room
 {
     List<Item> contents = new ArrayList<>();
 
-    public Shop(boolean open, int number, int row, int col, Dungeon dungeon) throws IOException
+    public Shop(boolean open, int number, int row, int col, Dungeon dungeon)
     {
         super(open, number, row, col, dungeon);
         Random rand = new Random();

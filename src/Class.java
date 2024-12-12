@@ -1,68 +1,125 @@
+import java.util.List;
+import java.util.Map;
+
 public enum Class
 {
     WARRIOR("Warrior",
-            TerminalColor.RED,
-            Level.HIGHEST,
-            Level.HIGHEST,
-            Level.LOW,
-            Level.LOW,
-            Level.LOWEST,
-            Level.HIGH,
-            Level.LOWEST,
-            Level.LOWEST,
-            Level.LOW),
+            "💂",
+            TerminalColor.RED),
     THIEF("Thief",
-          TerminalColor.BLUE,
-          Level.LOW,
-          Level.LOWEST,
-          Level.HIGHEST,
-          Level.HIGHEST,
-          Level.LOW,
-          Level.LOW,
-          Level.HIGH,
-          Level.HIGH,
-          Level.LOWEST),
+          "🥷",
+          TerminalColor.BLUE),
     MAGE("Mage",
-         TerminalColor.MAGENTA,
-         Level.LOWEST,
-         Level.LOWEST,
-         Level.LOW,
-         Level.LOWEST,
-         Level.HIGHEST,
-         Level.HIGH,
-         Level.LOW,
-         Level.HIGHEST,
-         Level.HIGHEST),
+         "🧙",
+         TerminalColor.MAGENTA),
     RANGER("Ranger",
-           TerminalColor.GREEN,
-           Level.LOWEST,
-           Level.LOW,
-           Level.HIGH,
-           Level.HIGHEST,
-           Level.HIGH,
-           Level.LOW,
-           Level.HIGHEST,
-           Level.LOW,
-           Level.LOWEST);
+           "🧝",
+           TerminalColor.GREEN);
 
-    final String name;
+    final String name, icon;
     final TerminalColor color;
-    final int STR, DEF, DEX, AGI, INT, HP, LCK, MAT, MDF;
+    int STR, DEF, DEX, AGI, INT, HP, LCK, MAT, MDF;
 
-    Class(String name, TerminalColor color, Level STR, Level DEF, Level DEX, Level AGI, Level INT, Level HP, Level LCK,
-          Level MAT, Level MDF)
+    Class(String name, String icon, TerminalColor color)
     {
         this.name = name;
+        this.icon = icon;
         this.color = color;
-        this.STR = Level.getRandomValue(STR);
-        this.DEF = Level.getRandomValue(DEF);
-        this.DEX = Level.getRandomValue(DEX);
-        this.AGI = Level.getRandomValue(AGI);
-        this.INT = Level.getRandomValue(INT);
-        this.HP = Level.getRandomValue(HP);
-        this.LCK = Level.getRandomValue(LCK);
-        this.MAT = Level.getRandomValue(MAT);
-        this.MDF = Level.getRandomValue(MDF);
+    }
+
+    public Map<String, List<String>> getStatRanges()
+    {
+        switch (this)
+        {
+            case WARRIOR ->
+            {
+                STR = Level.getRandomValue(Level.HIGHEST);
+                DEF = Level.getRandomValue(Level.HIGHEST);
+                DEX = Level.getRandomValue(Level.LOW);
+                AGI = Level.getRandomValue(Level.LOW);
+                INT = Level.getRandomValue(Level.LOWEST);
+                HP = Level.getRandomValue(Level.HIGH);
+                LCK = Level.getRandomValue(Level.LOWEST);
+                MAT = Level.getRandomValue(Level.LOWEST);
+                MDF = Level.getRandomValue(Level.LOW);
+
+                return Map.of("Highest",
+                              List.of("STR", "DEF"),
+                              "High",
+                              List.of("HP"),
+                              "Low",
+                              List.of("MDF", "DEX", "AGI"),
+                              "Lowest",
+                              List.of("MAT", "LCK", "INT"));
+            }
+            case THIEF ->
+            {
+                STR = Level.getRandomValue(Level.LOW);
+                DEF = Level.getRandomValue(Level.LOWEST);
+                DEX = Level.getRandomValue(Level.HIGHEST);
+                AGI = Level.getRandomValue(Level.HIGHEST);
+                INT = Level.getRandomValue(Level.LOW);
+                HP = Level.getRandomValue(Level.LOW);
+                LCK = Level.getRandomValue(Level.HIGH);
+                MAT = Level.getRandomValue(Level.HIGH);
+                MDF = Level.getRandomValue(Level.LOWEST);
+
+                return Map.of("Highest",
+                              List.of("DEX", "AGI"),
+                              "High",
+                              List.of("MAT", "LCK"),
+                              "Low",
+                              List.of("HP", "STR", "INT"),
+                              "Lowest",
+                              List.of("DEF", "MDF"));
+            }
+            case MAGE ->
+            {
+                STR = Level.getRandomValue(Level.LOWEST);
+                DEF = Level.getRandomValue(Level.LOWEST);
+                DEX = Level.getRandomValue(Level.LOW);
+                AGI = Level.getRandomValue(Level.LOWEST);
+                INT = Level.getRandomValue(Level.HIGHEST);
+                HP = Level.getRandomValue(Level.HIGH);
+                LCK = Level.getRandomValue(Level.LOW);
+                MAT = Level.getRandomValue(Level.HIGHEST);
+                MDF = Level.getRandomValue(Level.HIGHEST);
+
+                return Map.of("Highest",
+                              List.of("INT", "MAT", "MDF"),
+                              "High",
+                              List.of("HP"),
+                              "Low",
+                              List.of("LCK", "DEX"),
+                              "Lowest",
+                              List.of("STR", "AGI", "DEF"));
+            }
+            case RANGER ->
+            {
+                STR = Level.getRandomValue(Level.LOWEST);
+                DEF = Level.getRandomValue(Level.LOW);
+                DEX = Level.getRandomValue(Level.HIGH);
+                AGI = Level.getRandomValue(Level.HIGHEST);
+                INT = Level.getRandomValue(Level.HIGH);
+                HP = Level.getRandomValue(Level.LOW);
+                LCK = Level.getRandomValue(Level.HIGHEST);
+                MAT = Level.getRandomValue(Level.LOW);
+                MDF = Level.getRandomValue(Level.LOWEST);
+
+                return Map.of("Highest",
+                              List.of("LCK", "AGI"),
+                              "High",
+                              List.of("DEX", "INT"),
+                              "Low",
+                              List.of("DEF", "HP", "MAT"),
+                              "Lowest",
+                              List.of("MDF", "STR"));
+            }
+            default ->
+            {
+                return Map.of("Nothing", List.of("Nothing"));
+            }
+        }
     }
 
     public String toString()

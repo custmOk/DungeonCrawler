@@ -23,4 +23,17 @@ public enum Element
     {
         return TerminalColor.color(name, color);
     }
+
+    public static Element getElement(String name)
+    {
+        return switch (name)
+        {
+            case "Fire" -> Element.FIRE;
+            case "Water" -> Element.WATER;
+            case "Nature" -> Element.NATURE;
+            case "Electric" -> Element.ELECTRIC;
+            case "Ice" -> Element.ICE;
+            default -> Element.WIND;
+        };
+    }
 }

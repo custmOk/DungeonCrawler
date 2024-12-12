@@ -9,6 +9,8 @@ public class Room
     final String PLAYER = "\uD83D\uDC6E";
     final String SHOP = "\uD83C\uDFEA";
     final String MONSTERS = "\uD83D\uDC80";
+    final String MINI_BOSS = "\uD83D\uDC7F";
+    final String BOSS = "\uD83D\uDC7A";
     final String ITEMS = "\uD83C\uDFF9";
     final String CLEAR = "\uD83D\uDEA9";
 
@@ -64,6 +66,8 @@ public class Room
         if (playerIn) status = PLAYER;
         else if (startingRoom) status = START;
         else if (type == RoomType.SHOP) status = SHOP;
+        else if (type == RoomType.MINI_BOSS) status = MINI_BOSS;
+        else if (type == RoomType.BOSS) status = BOSS;
         else if (!monsters.isEmpty()) status = MONSTERS;
         else if (!items.isEmpty()) status = ITEMS;
         else status = CLEAR;

@@ -1,5 +1,7 @@
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.function.Consumer;
 
@@ -71,34 +73,26 @@ public class DungeonRunner
         sc.nextLine();
         printSpacing();
 
-        System.out.printf("""
-                                  Select a Class
-                                  
-                                  💂 %s
-                                      - Highest Stats: STR, DEF
-                                      - High Stats: HP
-                                      - Low Stats: MDF, DEX, AGI
-                                      - Lowest Stats: MAT, LCK, INT
-                                  🥷 %s
-                                      - Highest Stats: DEX, AGI
-                                      - High Stats: MAT, LCK
-                                      - Low Stats: HP, STR, INT
-                                      - Lowest Stats: DEF, MDF
-                                  🧙 %s
-                                      - Highest Stats: INT, MAT, MDF
-                                      - High Stats: HP
-                                      - Low Stats: LCK, DEX
-                                      - Lowest Stats: STR, AGI, DEF
-                                  🧝 %s
-                                      - Highest Stats: LCK, AGI
-                                      - High Stats: DEX, INT
-                                      - Low Stats: DEF, HP, MAT
-                                      - Lowest Stats: MDF, STR
-                                  %n""",
-                          TerminalColor.color("Warrior", TerminalColor.RED),
-                          TerminalColor.color("Thief", TerminalColor.BLUE),
-                          TerminalColor.color("Mage", TerminalColor.MAGENTA),
-                          TerminalColor.color("Ranger", TerminalColor.GREEN));
+        System.out.println("Select a Class");
+
+        for (Class c : Class.values())
+        {
+            Map<String, List<String>> statRanges = c.getStatRanges();
+            System.out.printf("""
+                                      %s %s
+                                          - Highest Stats: %s
+                                          - High Stats: %s
+                                          - Low Stats: %s
+                                          - Lowest Stats: %s
+                                      """,
+                              c.icon,
+                              c,
+                              String.join(", ", statRanges.get("Highest")),
+                              String.join(", ", statRanges.get("High")),
+                              String.join(", ", statRanges.get("Low")),
+                              String.join(", ", statRanges.get("Lowest")));
+        }
+        System.out.println();
 
         boolean classSelected = false;
 
@@ -147,28 +141,18 @@ public class DungeonRunner
 
         printSpacing();
 
-        System.out.printf("""
-                                  Select Element Affinity
-                                  
-                                  %s %s
-                                  %s %s
-                                  %s %s
-                                  %s %s
-                                  %s %s
-                                  %s %s
-                                  %n""",
-                          Element.FIRE.icon,
-                          Element.FIRE,
-                          Element.WATER.icon,
-                          Element.WATER,
-                          Element.NATURE.icon,
-                          Element.NATURE,
-                          Element.ELECTRIC.icon,
-                          Element.ELECTRIC,
-                          Element.ICE.icon,
-                          Element.ICE,
-                          Element.WIND.icon,
-                          Element.WIND);
+        System.out.println("Select Element Affinity\n");
+        for (Element e : Element.values())
+        {
+            System.out.printf("%s %s (Strong against %s %s, Weak to %s %s)%n",
+                              e.icon,
+                              e,
+                              Element.getElement(e.strong).icon,
+                              Element.getElement(e.strong),
+                              Element.getElement(e.weak).icon,
+                              Element.getElement(e.weak));
+        }
+        System.out.println();
 
         boolean affinitySelected = false;
 
