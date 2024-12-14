@@ -79,7 +79,7 @@ public class Dungeon
                 int roomsRequired = (maxShops - shops) + (maxMiniBosses - miniBosses) + (maxBosses - bosses);
                 boolean isShop = shops < maxShops && rand.nextDouble() < 0.1 ||
                         targetRooms - roomsOpen <= roomsRequired;
-                boolean isMiniBoss = !isShop && miniBosses < maxMiniBosses && rand.nextDouble() < 0.1 ||
+                boolean isMiniBoss = !isShop && miniBosses < maxMiniBosses && rand.nextDouble() < 0.2 ||
                         targetRooms - roomsOpen <= roomsRequired;
                 boolean isBoss = !isShop && !isMiniBoss && bosses < maxBosses && rand.nextDouble() < 0.1 ||
                         targetRooms - roomsOpen <= roomsRequired;

@@ -66,8 +66,24 @@ public class Room
         if (playerIn) status = PLAYER;
         else if (startingRoom) status = START;
         else if (type == RoomType.SHOP) status = SHOP;
-        else if (type == RoomType.MINI_BOSS) status = MINI_BOSS;
-        else if (type == RoomType.BOSS) status = BOSS;
+        else if (type == RoomType.MINI_BOSS)
+        {
+            if (!monsters.isEmpty())
+                status = MINI_BOSS;
+            else if (!items.isEmpty())
+                status = ITEMS;
+            else
+                status = CLEAR;
+        }
+        else if (type == RoomType.BOSS)
+        {
+            if (!monsters.isEmpty())
+                status = BOSS;
+            else if (!items.isEmpty())
+                status = ITEMS;
+            else
+                status = CLEAR;
+        }
         else if (!monsters.isEmpty()) status = MONSTERS;
         else if (!items.isEmpty()) status = ITEMS;
         else status = CLEAR;
