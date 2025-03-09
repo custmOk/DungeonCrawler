@@ -1,6 +1,6 @@
 public class Settings
 {
-    static int fileNumber;
+    static String fileName;
     static String playerName;
     static Class classType;
     static Element elementType;
@@ -9,8 +9,8 @@ public class Settings
 
     public static String formatSettings()
     {
-        return String.format("%d - %s %s %s (%d-%d)%n",
-                fileNumber,
+        return String.format("%s - %s %s %s (%d-%d)%n",
+                fileName,
                 elementType.name,
                 classType.name,
                 playerName,

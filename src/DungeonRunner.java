@@ -4,10 +4,7 @@ import com.google.gson.GsonBuilder;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class DungeonRunner
@@ -31,33 +28,83 @@ public class DungeonRunner
             String choice = sc.next();
             if (choice.equalsIgnoreCase("new"))
             {
-                run = false;
-                dungeon = new Dungeon();
+                sc.nextLine();
 
-                startCharacterCreation();
+                run = false;
+                boolean savedName = false;
+                while (!savedName)
+                {
+                    System.out.print("Enter save name: ");
+                    String name = sc.nextLine();
+                    name = name.strip();
+                    File[] files = new File("saves\\.").listFiles();
+                    if (files == null)
+                    {
+                        TerminalColor.logError("files is null (for some reason...)");
+                        return;
+                    }
+                    ArrayList<String> list = new ArrayList<>(Arrays.stream(files)
+                            .map(file -> file.getName().replace(".txt", ""))
+                            .toList());
+                    if (list.contains(name)) TerminalColor.logError("file name already exists");
+                    else if (name.split("\\s+").length != 1) TerminalColor.logError("file name cannot contain spaces");
+                    else if (name.length() < 3 || name.length() > 16)
+                        TerminalColor.logError("file name must be 3-16 characters");
+                    else
+                    {
+                        savedName = true;
+
+                        dungeon = new Dungeon(name);
+                        startCharacterCreation();
+                    }
+                }
             }
             else if (choice.equalsIgnoreCase("continue"))
             {
-                System.out.print("enter file number: ");
-                String fileName = sc.nextInt() + ".txt";
-                File file = new File(fileName);
-                if (!file.exists()) TerminalColor.logError("file not found");
-                else
+                sc.nextLine();
+
+                boolean savedName = false;
+                File[] files = new File("saves\\.").listFiles();
+                if (files != null)
                 {
-                    Gson gson = new GsonBuilder().registerTypeAdapter(Random.class, new RandomTypeAdapter())
-                            .registerTypeAdapter(File.class, new FileTypeAdapter())
-                            .setPrettyPrinting()
-                            .create();
-
-                    try (FileReader playerReader = new FileReader(file))
+                    System.out.println("Files found: " + (files.length - 1));
+                    for (File f : files)
+                        if (!f.getName().equals("dungeon_data.txt"))
+                            System.out.println(" > " + f.getName().replace(".txt", ""));
+                }
+                while (!savedName)
+                {
+                    System.out.print("enter file name: ");
+                    String name = sc.nextLine();
+                    name = name.strip();
+                    if (name.split("\\s+").length != 1) TerminalColor.logError("file name cannot contain spaces");
+                    else if (name.length() < 3 || name.length() > 16)
+                        TerminalColor.logError("file name must be 3-16 characters");
+                    else
                     {
-                        player = gson.fromJson(playerReader, Player.class);
-                        dungeon = player.dungeon;
+                        savedName = true;
+
+                        String path = "saves\\" + name + ".txt";
+                        File file = new File(path);
+                        if (!file.exists()) TerminalColor.logError("file not found");
+                        else
+                        {
+                            Gson gson = new GsonBuilder().registerTypeAdapter(Random.class, new RandomTypeAdapter())
+                                    .registerTypeAdapter(File.class, new FileTypeAdapter())
+                                    .setPrettyPrinting()
+                                    .create();
+
+                            try (FileReader playerReader = new FileReader(file))
+                            {
+                                player = gson.fromJson(playerReader, Player.class);
+                                dungeon = player.dungeon;
+                            }
+
+                            run = false;
+
+                            startGameLoop();
+                        }
                     }
-
-                    run = false;
-
-                    startGameLoop();
                 }
             }
             else TerminalColor.logError("invalid input");
@@ -256,7 +303,6 @@ public class DungeonRunner
             }
         }
 
-        player.save();
         startGameLoop();
     }
 

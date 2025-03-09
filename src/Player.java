@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.Scanner;
 
 public class Player
 {
@@ -16,7 +15,7 @@ public class Player
     Item equipped;
     Class cls;
     Element affinity;
-    transient Random rand;
+    Random rand;
     double health;
     int defeatedMonsters;
     int coins;
@@ -431,20 +430,17 @@ public class Player
 
     public void save() throws IOException
     {
-        File data = new File("dungeon_data.txt");
-        Scanner sc = new Scanner(data);
-        String line = "";
-        while (sc.hasNextLine()) line = sc.nextLine();
-        int fileNumber = line.isEmpty() ? 1 : Integer.parseInt(line.split("\\s+")[0]) + 1;
-        Settings.fileNumber = fileNumber;
+        File data = new File("saves\\dungeon_data.txt");
+        Settings.fileName = dungeon.dungeonName;
 
         try (FileWriter dataWriter = new FileWriter(data, true))
         {
             dataWriter.write(Settings.formatSettings());
         }
 
-        File dungeonFile = new File(fileNumber + ".txt");
-        Gson gson = new GsonBuilder().registerTypeAdapter(Random.class, new RandomTypeAdapter())
+        File dungeonFile = new File("saves\\" + dungeon.dungeonName + ".txt");
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(Random.class, new RandomTypeAdapter())
                 .registerTypeAdapter(File.class, new FileTypeAdapter())
                 .setPrettyPrinting()
                 .create();

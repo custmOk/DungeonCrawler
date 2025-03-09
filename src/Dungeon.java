@@ -17,8 +17,9 @@ public class Dungeon
 
     Random rand;
     long seed;
+    String dungeonName;
 
-    public Dungeon()
+    public Dungeon(String name)
     {
         for (int i = 0; i < SIZE; i++)
             for (int j = 0; j < SIZE; j++)
@@ -27,10 +28,11 @@ public class Dungeon
         seed = rand.nextLong();
         rand.setSeed(seed);
         Settings.dungeonSeed = seed;
+        dungeonName = name;
         createDungeon();
     }
 
-    public Dungeon(long seed)
+    public Dungeon(String name, long seed)
     {
         for (int i = 0; i < SIZE; i++)
             for (int j = 0; j < SIZE; j++)
@@ -39,6 +41,7 @@ public class Dungeon
         this.seed = seed;
         rand.setSeed(seed);
         Settings.dungeonSeed = seed;
+        dungeonName = name;
         constructDungeon();
     }
 
