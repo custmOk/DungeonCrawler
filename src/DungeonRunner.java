@@ -373,12 +373,12 @@ public class DungeonRunner
                             "🔎 examine item #",
                             "👋 use #",
                             "💶 shop buy #"),
-                    tableRow("📋 descriptions",
+                    tableRow("\uD83D\uDCBE save",
                             "\uD83D\uDD39",
                             "📂 take #",
                             "\uD83D\uDD39",
                             "💷 shop sell " + "#"),
-                    tableRow("\uD83D\uDD39", "\uD83D\uDD39", "💥 attack #", "\uD83D\uDD39", "\uD83D\uDD39"),
+                    tableRow("📋 descriptions", "\uD83D\uDD39", "💥 attack #", "\uD83D\uDD39", "\uD83D\uDD39"),
                     tableDivider(1));
 
             System.out.print("Action: ");
