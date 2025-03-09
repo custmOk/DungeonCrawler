@@ -4,22 +4,22 @@ import java.util.stream.IntStream;
 
 public class Room
 {
-    final String WALL = "\uD83E\uDDF1";
-    final String START = "\uD83C\uDFE0";
-    final String PLAYER = "\uD83D\uDC6E";
-    final String SHOP = "\uD83C\uDFEA";
-    final String MONSTERS = "\uD83D\uDC80";
-    final String MINI_BOSS = "\uD83D\uDC7F";
-    final String BOSS = "\uD83D\uDC7A";
-    final String ITEMS = "\uD83C\uDFF9";
-    final String CLEAR = "\uD83D\uDEA9";
+    transient final String WALL = "\uD83E\uDDF1";
+    transient final String START = "\uD83C\uDFE0";
+    transient final String PLAYER = "\uD83D\uDC6E";
+    transient final String SHOP = "\uD83C\uDFEA";
+    transient final String MONSTERS = "\uD83D\uDC80";
+    transient final String MINI_BOSS = "\uD83D\uDC7F";
+    transient final String BOSS = "\uD83D\uDC7A";
+    transient final String ITEMS = "\uD83C\uDFF9";
+    transient final String CLEAR = "\uD83D\uDEA9";
 
     int row;
     int col;
     int number;
 
     RoomType type;
-    Dungeon dungeon;
+    transient Dungeon dungeon;
 
     boolean startingRoom;
     boolean open;

@@ -8,7 +8,7 @@ Supports the Windows 11 Terminal app
 
 ## Run Locally
 
-Download `DungeonCrawler.zip` from Releases
+Download `DungeonCrawler.7z` from Releases
 
 Run `start.bat`
 

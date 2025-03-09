@@ -1,6 +1,13 @@
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
 
 public class Player
 {
@@ -9,7 +16,7 @@ public class Player
     Item equipped;
     Class cls;
     Element affinity;
-    Random rand = new Random();
+    transient Random rand;
     double health;
     int defeatedMonsters;
     int coins;
@@ -32,7 +39,7 @@ public class Player
         MAX_MANA = 50;
         mana = MAX_MANA;
 
-        Random rand = new Random(dungeon.seed);
+        rand = new Random(dungeon.seed);
         do
         {
             dungeon.currentRoom = dungeon.openRooms.get(rand.nextInt(dungeon.openRooms.size()));
@@ -41,6 +48,7 @@ public class Player
         dungeon.currentRoom.startingRoom = true;
         dungeon.currentRoom.playerIn = true;
         dungeon.currentRoom.updateStatus();
+        Settings.startingRoomNumber = dungeon.currentRoom.number;
     }
 
     private double levelScaleStrDefHpIntMatMdf(int level)
@@ -146,19 +154,7 @@ public class Player
 
     public void classInfo()
     {
-        System.out.printf("Selected Class: %s%nStats:%n\tStrength - %d%n\tDefense - %d%n\tDexterity - %d%n" +
-                                  "\tAgility - %d%n\tIntelligence - %d%n\tHealth Points - %d%n" + "\tLuck - " + "%d%n"
-                                  + "\tMagic Attack - %d%n\tMagic Defense - %d%n",
-                          cls,
-                          cls.STR,
-                          cls.DEF,
-                          cls.DEX,
-                          cls.AGI,
-                          cls.INT,
-                          cls.HP,
-                          cls.LCK,
-                          cls.MAT,
-                          cls.MDF);
+        System.out.printf("Selected Class: %s%nStats:%n\tStrength - %d%n\tDefense - %d%n\tDexterity - %d%n" + "\tAgility - %d%n\tIntelligence - %d%n\tHealth Points - %d%n" + "\tLuck - " + "%d%n" + "\tMagic Attack - %d%n\tMagic Defense - %d%n", cls, cls.STR, cls.DEF, cls.DEX, cls.AGI, cls.INT, cls.HP, cls.LCK, cls.MAT, cls.MDF);
     }
 
     public void contents()
@@ -298,10 +294,7 @@ public class Player
                     double changeBy = baseChange * (isCritical ? 2 : 1);
                     monster.health -= changeBy;
                     weapon.uses--;
-                    System.out.printf("\uD83D\uDCA5 You hit %s for %.2f%s damage%n",
-                                      monster.type,
-                                      changeBy,
-                                      isCritical ? " " + TerminalColor.critical("critical") : "");
+                    System.out.printf("\uD83D\uDCA5 You hit %s for %.2f%s damage%n", monster.type, changeBy, isCritical ? " " + TerminalColor.critical("critical") : "");
                     if (weapon.uses == 1) System.out.printf("%s has one more use%n", weapon.getInfo());
                     if (weapon.uses <= 0)
                     {
@@ -318,11 +311,7 @@ public class Player
                     {
                         hit = true;
                         double baseChange = spell.damage * levelScaleStrDefHpIntMatMdf(cls.MAT);
-                        String effectiveness = monster.element == null ?
-                                "boosted" :
-                                spell.element.name.equals(monster.element.name) ?
-                                        "normal" :
-                                        spell.element.strong.equals(monster.element.name) ? "strengthened" : "weakened";
+                        String effectiveness = monster.element == null ? "boosted" : spell.element.name.equals(monster.element.name) ? "normal" : spell.element.strong.equals(monster.element.name) ? "strengthened" : "weakened";
                         double changeFactor = switch (effectiveness)
                         {
                             case "strengthened" -> 2;
@@ -333,11 +322,7 @@ public class Player
                         double changeBy = baseChange * changeFactor;
                         monster.health -= changeBy;
                         mana -= spell.manaCost;
-                        System.out.printf("%s You hit %s for %.2f %s damage%n",
-                                          spell.icon,
-                                          monster.type,
-                                          changeBy,
-                                          effectiveness);
+                        System.out.printf("%s You hit %s for %.2f %s damage%n", spell.icon, monster.type, changeBy, effectiveness);
                     }
                 }
                 default -> System.out.println("How did you get here?");
@@ -434,17 +419,39 @@ public class Player
     {
         if (dungeon.currentRoom.startingRoom)
         {
-            System.out.printf(
-                    "\uD83C\uDFC6 Successfully Escaped!%n\uD83D\uDC7F Monsters Defeated: %d%n\uD83E\uDE99 Coins " +
-                            "Collected: %d%n",
-                    defeatedMonsters,
-                    coins);
+            System.out.printf("\uD83C\uDFC6 Successfully Escaped!%n\uD83D\uDC7F Monsters Defeated: %d%n\uD83E\uDE99 Coins " + "Collected: %d%n", defeatedMonsters, coins);
             return true;
         }
         else
         {
             System.out.printf("❗You must escape from the starting room! (%s)%n", dungeon.currentRoom.START);
             return false;
+        }
+    }
+
+    public void save() throws IOException
+    {
+        File data = new File("dungeon_data.txt");
+        Scanner sc = new Scanner(data);
+        String line = "";
+        while (sc.hasNextLine()) line = sc.nextLine();
+        int fileNumber = line.isEmpty() ? 1 : Integer.parseInt(line.split("\\s+")[0]) + 1;
+        Settings.fileNumber = fileNumber;
+
+        try (FileWriter dataWriter = new FileWriter(data, true))
+        {
+            dataWriter.write(Settings.formatSettings());
+        }
+
+        File dungeonFile = new File(fileNumber + ".txt");
+        Gson gson = new GsonBuilder().registerTypeAdapter(Random.class, new RandomTypeAdapter())
+                .registerTypeAdapter(File.class, new FileTypeAdapter())
+                .setPrettyPrinting()
+                .create();
+
+        try (FileWriter dungeonWriter = new FileWriter(dungeonFile))
+        {
+            gson.toJson(this, dungeonWriter);
         }
     }
 
@@ -460,20 +467,14 @@ public class Player
     {
         for (Monster monster : dungeon.currentRoom.monsters)
         {
-            String effectiveness = monster.element == null ?
-                    "normal" :
-                    affinity.name.equals(monster.element.name) ?
-                            "normal" :
-                            affinity.weak.equals(monster.element.name) ? "strengthened" : "weakened";
+            String effectiveness = monster.element == null ? "normal" : affinity.name.equals(monster.element.name) ? "normal" : affinity.weak.equals(monster.element.name) ? "strengthened" : "weakened";
             double affinityScaling = switch (effectiveness)
             {
                 case "strengthened" -> 2;
                 case "weakened" -> 0.5;
                 default -> 1;
             };
-            double baseChange = monster.element == null ?
-                    monster.weapon.damage * levelScaleStrDefHpIntMatMdf(cls.DEF) :
-                    monster.weapon.damage * levelScaleStrDefHpIntMatMdf(cls.MDF) * affinityScaling;
+            double baseChange = monster.element == null ? monster.weapon.damage * levelScaleStrDefHpIntMatMdf(cls.DEF) : monster.weapon.damage * levelScaleStrDefHpIntMatMdf(cls.MDF) * affinityScaling;
             boolean dodged = rand.nextInt(100) < levelScaleDexAgiLck(cls.AGI);
             double changeBy = baseChange * (dodged ? 0 : 1);
             health -= changeBy;

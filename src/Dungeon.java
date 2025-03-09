@@ -1,3 +1,7 @@
+import com.google.gson.*;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+
 import java.util.*;
 import java.io.*;
 
@@ -14,9 +18,7 @@ public class Dungeon
     Random rand;
     long seed;
 
-    File data = new File("dungeon_data.txt");
-
-    public Dungeon() throws IOException
+    public Dungeon()
     {
         for (int i = 0; i < SIZE; i++)
             for (int j = 0; j < SIZE; j++)
@@ -24,6 +26,7 @@ public class Dungeon
         rand = new Random();
         seed = rand.nextLong();
         rand.setSeed(seed);
+        Settings.dungeonSeed = seed;
         createDungeon();
     }
 
@@ -35,6 +38,7 @@ public class Dungeon
         rand = new Random();
         this.seed = seed;
         rand.setSeed(seed);
+        Settings.dungeonSeed = seed;
         constructDungeon();
     }
 
@@ -77,36 +81,23 @@ public class Dungeon
             if (!dungeon[row][col].getOpen())
             {
                 int roomsRequired = (maxShops - shops) + (maxMiniBosses - miniBosses) + (maxBosses - bosses);
-                boolean isShop = shops < maxShops && rand.nextDouble() < 0.1 ||
-                        targetRooms - roomsOpen <= roomsRequired;
-                boolean isMiniBoss = !isShop && miniBosses < maxMiniBosses && rand.nextDouble() < 0.2 ||
-                        targetRooms - roomsOpen <= roomsRequired;
-                boolean isBoss = !isShop && !isMiniBoss && bosses < maxBosses && rand.nextDouble() < 0.1 ||
-                        targetRooms - roomsOpen <= roomsRequired;
+                boolean isShop = shops < maxShops && rand.nextDouble() < 0.1 || targetRooms - roomsOpen <= roomsRequired;
+                boolean isMiniBoss = !isShop && miniBosses < maxMiniBosses && rand.nextDouble() < 0.25 || targetRooms - roomsOpen <= roomsRequired;
+                boolean isBoss = !isShop && !isMiniBoss && bosses < maxBosses && rand.nextDouble() < 0.1 || targetRooms - roomsOpen <= roomsRequired;
 
                 if (isShop)
                 {
-                    dungeon[row][col] = new Shop(true,
-                                                 dungeon[row][col].number,
-                                                 dungeon[row][col].row,
-                                                 dungeon[row][col].col,
-                                                 this);
+                    dungeon[row][col] = new Shop(true, dungeon[row][col].number, dungeon[row][col].row, dungeon[row][col].col, this);
                     dungeon[row][col].type = RoomType.SHOP;
                     shops++;
                 }
                 else if (isMiniBoss)
                 {
-                    dungeon[row][col] = new MiniBoss(true,
-                                                     dungeon[row][col].number,
-                                                     dungeon[row][col].row,
-                                                     dungeon[row][col].col,
-                                                     this);
+                    dungeon[row][col] = new MiniBoss(true, dungeon[row][col].number, dungeon[row][col].row, dungeon[row][col].col, this);
                     dungeon[row][col].type = RoomType.MINI_BOSS;
                     for (int i = 0; i < rand.nextInt(2); i++)
                     {
-                        dungeon[row][col].addItem(rand.nextBoolean() ?
-                                                          generateRandomWeapon(Rarity.EPIC) :
-                                                          generateRandomPotion(Rarity.EPIC));
+                        dungeon[row][col].addItem(rand.nextBoolean() ? generateRandomWeapon(Rarity.EPIC) : generateRandomPotion(Rarity.EPIC));
                     }
                     for (int i = 0; i < rand.nextInt(3); i++)
                     {
@@ -122,15 +113,9 @@ public class Dungeon
                 }
                 else if (isBoss)
                 {
-                    dungeon[row][col] = new Boss(true,
-                                                 dungeon[row][col].number,
-                                                 dungeon[row][col].row,
-                                                 dungeon[row][col].col,
-                                                 this);
+                    dungeon[row][col] = new Boss(true, dungeon[row][col].number, dungeon[row][col].row, dungeon[row][col].col, this);
                     dungeon[row][col].type = RoomType.BOSS;
-                    dungeon[row][col].addItem(rand.nextBoolean() ?
-                                                      generateRandomWeapon(Rarity.LEGENDARY) :
-                                                      generateRandomPotion(Rarity.LEGENDARY));
+                    dungeon[row][col].addItem(rand.nextBoolean() ? generateRandomWeapon(Rarity.LEGENDARY) : generateRandomPotion(Rarity.LEGENDARY));
                     for (int i = 0; i < rand.nextInt(2); i++)
                     {
                         double chance = rand.nextDouble();
@@ -155,9 +140,7 @@ public class Dungeon
                         if (chance < 0.6) rarity = Rarity.COMMON;
                         else if (chance < 0.9) rarity = Rarity.UNCOMMON;
                         else rarity = Rarity.RARE;
-                        dungeon[row][col].addItem(rand.nextBoolean() ?
-                                                          generateRandomWeapon(rarity) :
-                                                          generateRandomPotion(rarity));
+                        dungeon[row][col].addItem(rand.nextBoolean() ? generateRandomWeapon(rarity) : generateRandomPotion(rarity));
                     }
                     for (int i = 0; i < rand.nextInt(5); i++)
                     {
@@ -177,44 +160,11 @@ public class Dungeon
         }
     }
 
-    // random walk until half the space is opened
-    public void createDungeon() throws IOException
+    public void createDungeon()
     {
         System.out.println("Generating dungeon...");
 
         constructDungeon();
-
-        File dungeonFile = writeFiles();
-
-        System.out.println("Saved to " + dungeonFile.getName());
-
-        // getDungeonInfo();
-    }
-
-    File writeFiles() throws IOException
-    {
-        int fileNumber;
-        try (Scanner sc = new Scanner(data))
-        {
-            fileNumber = sc.hasNextLine() ? Integer.parseInt(sc.nextLine()) + 1 : 1;
-        }
-        catch (Exception e)
-        {
-            fileNumber = 1;
-        }
-
-        try (FileWriter dataWriter = new FileWriter(data))
-        {
-            dataWriter.write(fileNumber + "");
-        }
-
-        File dungeonFile = new File(fileNumber + ".txt");
-        try (FileWriter dungeonWriter = new FileWriter(dungeonFile))
-        {
-            dungeonWriter.write(getDungeon());
-        }
-
-        return dungeonFile;
     }
 
     Weapon generateRandomWeapon(Rarity rarity)
@@ -323,5 +273,37 @@ public class Dungeon
         }
         sb.append("\uD83E\uDDF1".repeat(SIZE + 2)).append("\n");
         return sb.toString();
+    }
+}
+
+class RandomTypeAdapter
+        extends TypeAdapter<Random>
+{
+    @Override
+    public void write(JsonWriter out, Random value) throws IOException
+    {
+        out.value(value.nextLong());
+    }
+
+    @Override
+    public Random read(JsonReader in) throws IOException
+    {
+        return new Random(in.nextLong());
+    }
+}
+
+class FileTypeAdapter
+        extends TypeAdapter<File>
+{
+    @Override
+    public void write(JsonWriter out, File file) throws IOException
+    {
+        out.value(file.getPath());
+    }
+
+    @Override
+    public File read(JsonReader in) throws IOException
+    {
+        return new File(in.nextString());
     }
 }

@@ -3,7 +3,7 @@ import java.util.Random;
 public class Item
 {
     int maxUses;
-    Random rand = new Random();
+    transient Random rand = new Random();
     String name;
     int uses;
     int price;
