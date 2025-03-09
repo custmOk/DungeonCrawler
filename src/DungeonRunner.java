@@ -21,6 +21,10 @@ public class DungeonRunner
     {
         Scanner sc = new Scanner(System.in);
         System.out.println("Eternal Dungeon");
+        File savesDir = new File("saves");
+        savesDir.mkdir();
+        File dungeonFile = new File(savesDir + "\\dungeon_data.txt");
+        dungeonFile.createNewFile();
         boolean run = true;
         while (run)
         {
@@ -38,16 +42,22 @@ public class DungeonRunner
                     String name = sc.nextLine();
                     name = name.strip();
                     File[] files = new File("saves\\.").listFiles();
-                    if (files == null)
+                    if (files != null)
                     {
-                        TerminalColor.logError("files is null (for some reason...)");
-                        return;
+                        ArrayList<String> list = new ArrayList<>(Arrays.stream(files)
+                                .map(file -> file.getName().replace(".txt", ""))
+                                .toList());
+                        if (list.contains(name)) TerminalColor.logError("file name already exists");
+                        else
+                        {
+                            savedName = true;
+
+                            dungeon = new Dungeon(name);
+                            startCharacterCreation();
+                        }
                     }
-                    ArrayList<String> list = new ArrayList<>(Arrays.stream(files)
-                            .map(file -> file.getName().replace(".txt", ""))
-                            .toList());
-                    if (list.contains(name)) TerminalColor.logError("file name already exists");
-                    else if (name.split("\\s+").length != 1) TerminalColor.logError("file name cannot contain spaces");
+                    else if (name.split("\\s+").length != 1)
+                        TerminalColor.logError("file name cannot contain spaces");
                     else if (name.length() < 3 || name.length() > 16)
                         TerminalColor.logError("file name must be 3-16 characters");
                     else
@@ -77,7 +87,8 @@ public class DungeonRunner
                     System.out.print("enter file name: ");
                     String name = sc.nextLine();
                     name = name.strip();
-                    if (name.split("\\s+").length != 1) TerminalColor.logError("file name cannot contain spaces");
+                    if (name.split("\\s+").length != 1)
+                        TerminalColor.logError("file name cannot contain spaces");
                     else if (name.length() < 3 || name.length() > 16)
                         TerminalColor.logError("file name must be 3-16 characters");
                     else
@@ -89,7 +100,8 @@ public class DungeonRunner
                         if (!file.exists()) TerminalColor.logError("file not found");
                         else
                         {
-                            Gson gson = new GsonBuilder().registerTypeAdapter(Random.class, new RandomTypeAdapter())
+                            Gson gson = new GsonBuilder().registerTypeAdapter(Random.class,
+                                            new RandomTypeAdapter())
                                     .registerTypeAdapter(File.class, new FileTypeAdapter())
                                     .setPrettyPrinting()
                                     .create();
@@ -356,8 +368,16 @@ public class DungeonRunner
                             TerminalColor.color("🔸 Shop", TerminalColor.YELLOW)),
                     tableRow("🧭 [WASD]", "💰 pouch", "📄 contents", "🎒 inventory", "💵 shop"),
                     tableRow("🌎 map", "📊 status", "🔍 examine monster #", "📕 inventory #", "💴 shop #"),
-                    tableRow("🏃 escape", "\uD83E\uDEAA player", "🔎 examine item #", "👋 use #", "💶 shop buy #"),
-                    tableRow("📋 descriptions", "\uD83D\uDD39", "📂 take #", "\uD83D\uDD39", "💷 shop sell " + "#"),
+                    tableRow("🏃 escape",
+                            "\uD83E\uDEAA player",
+                            "🔎 examine item #",
+                            "👋 use #",
+                            "💶 shop buy #"),
+                    tableRow("📋 descriptions",
+                            "\uD83D\uDD39",
+                            "📂 take #",
+                            "\uD83D\uDD39",
+                            "💷 shop sell " + "#"),
                     tableRow("\uD83D\uDD39", "\uD83D\uDD39", "💥 attack #", "\uD83D\uDD39", "\uD83D\uDD39"),
                     tableDivider(1));
 
