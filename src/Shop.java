@@ -2,7 +2,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class Shop extends Room
+public class Shop
+        extends Room
+        implements Purchasable
 {
     List<Item> contents = new ArrayList<>();
 
@@ -28,5 +30,10 @@ public class Shop extends Room
                 default -> null;
             });
         }
+    }
+
+    public List<Item> getContents()
+    {
+        return contents;
     }
 }

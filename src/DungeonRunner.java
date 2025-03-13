@@ -41,31 +41,28 @@ public class DungeonRunner
                     System.out.print("Enter save name: ");
                     String name = sc.nextLine();
                     name = name.strip();
-                    File[] files = new File("saves\\.").listFiles();
-                    if (files != null)
-                    {
-                        ArrayList<String> list = new ArrayList<>(Arrays.stream(files)
-                                .map(file -> file.getName().replace(".txt", ""))
-                                .toList());
-                        if (list.contains(name)) TerminalColor.logError("file name already exists");
-                        else
-                        {
-                            savedName = true;
-
-                            dungeon = new Dungeon(name);
-                            startCharacterCreation();
-                        }
-                    }
-                    else if (name.split("\\s+").length != 1)
+                    if (name.split("\\s+").length != 1)
                         TerminalColor.logError("file name cannot contain spaces");
                     else if (name.length() < 3 || name.length() > 16)
                         TerminalColor.logError("file name must be 3-16 characters");
                     else
                     {
-                        savedName = true;
+                        File[] files = new File("saves\\.").listFiles();
+                        if (files != null)
+                        {
+                            ArrayList<String> list = new ArrayList<>(Arrays.stream(files)
+                                    .map(file -> file.getName().replace(".txt", ""))
+                                    .toList());
+                            if (list.contains(name)) TerminalColor.logError("file name already exists");
+                            else
+                            {
+                                savedName = true;
 
-                        dungeon = new Dungeon(name);
-                        startCharacterCreation();
+                                dungeon = new Dungeon(name);
+                                startCharacterCreation();
+                            }
+                        }
+                        else TerminalColor.logError("how did you get here?");
                     }
                 }
             }
@@ -97,12 +94,17 @@ public class DungeonRunner
 
                         String path = "saves\\" + name + ".txt";
                         File file = new File(path);
-                        if (!file.exists()) TerminalColor.logError("file not found");
+                        if (!file.exists())
+                        {
+                            TerminalColor.logError("file not found");
+                            savedName = false;
+                        }
                         else
                         {
                             Gson gson = new GsonBuilder().registerTypeAdapter(Random.class,
                                             new RandomTypeAdapter())
                                     .registerTypeAdapter(File.class, new FileTypeAdapter())
+                                    .registerTypeAdapter(Class.class, new ClassTypeAdapter())
                                     .setPrettyPrinting()
                                     .create();
 
@@ -113,6 +115,7 @@ public class DungeonRunner
                             }
 
                             run = false;
+                            System.out.println(player.cls.DEF);
 
                             startGameLoop();
                         }
@@ -331,6 +334,7 @@ public class DungeonRunner
                 \uD83C\uDFE0 - Start and Exit Room
                 \uD83D\uDC6E - Your Current Room
                 \uD83C\uDFEA - Shop/Store Room
+                \uD83D\uDDD1️ - Recycler Room
                 \uD83D\uDC7F - Mini Boss Room
                 \uD83D\uDC7A - Boss Room
                 \uD83D\uDC80 - Monsters in Room (can have items)
@@ -365,20 +369,38 @@ public class DungeonRunner
                             TerminalColor.color("🔸 Information", TerminalColor.YELLOW),
                             TerminalColor.color("🔸 Room", TerminalColor.YELLOW),
                             TerminalColor.color("🔸 Player", TerminalColor.YELLOW),
-                            TerminalColor.color("🔸 Shop", TerminalColor.YELLOW)),
-                    tableRow("🧭 [WASD]", "💰 pouch", "📄 contents", "🎒 inventory", "💵 shop"),
-                    tableRow("🌎 map", "📊 status", "🔍 examine monster #", "📕 inventory #", "💴 shop #"),
+                            TerminalColor.color("🔸 Shop", TerminalColor.YELLOW),
+                            TerminalColor.color("🔸 Recycler", TerminalColor.YELLOW)),
+                    tableRow("🧭 [WASD]",
+                            "💰 pouch",
+                            "📄 contents",
+                            "🎒 inventory",
+                            "💵 shop",
+                            "\uD83D\uDDD1️ recycler"),
+                    tableRow("🌎 map",
+                            "📊 status",
+                            "🔍 examine monster #",
+                            "📕 inventory #",
+                            "💴 shop #",
+                            "\uD83E\uDDFE recycler #"),
                     tableRow("🏃 escape",
                             "\uD83E\uDEAA player",
                             "🔎 examine item #",
                             "👋 use #",
-                            "💶 shop buy #"),
+                            "💶 shop buy #",
+                            "\uD83D\uDCB3 recycler buy #"),
                     tableRow("\uD83D\uDCBE save",
                             "\uD83D\uDD39",
                             "📂 take #",
                             "\uD83D\uDD39",
-                            "💷 shop sell " + "#"),
-                    tableRow("📋 descriptions", "\uD83D\uDD39", "💥 attack #", "\uD83D\uDD39", "\uD83D\uDD39"),
+                            "💷 shop sell #",
+                            "\uD83D\uDD39"),
+                    tableRow("📋 descriptions",
+                            "\uD83D\uDD39",
+                            "💥 attack #",
+                            "\uD83D\uDD39",
+                            "\uD83D\uDD39",
+                            "\uD83D\uDD39"),
                     tableDivider(1));
 
             System.out.print("Action: ");
@@ -408,6 +430,12 @@ public class DungeonRunner
                     else if (actions.length < 3) handleActionWithIndex(player::shop, actions);
                     else handleShop(player, actions);
                 }
+                case "recycler" ->
+                {
+                    if (actions.length < 2) player.recycler();
+                    else if (actions.length < 3) handleActionWithIndex(player::recycler, actions);
+                    else handleRecycler(player, actions);
+                }
                 case "save" ->
                 {
                     player.save();
@@ -435,6 +463,9 @@ public class DungeonRunner
                         shop # - prints item from shop at index #
                         shop buy # - buys item at index #
                         shop sell # - sells item from inventory for half price at index #
+                        recycler - prints items and cost in recycler
+                        recycler # - prints item from recycler at index #
+                        recycler buy # - buys item from recycler at index #
                         save - saves the dungeon to be continued later
                         escape - escapes the dungeon if in starting room""");
                 default -> TerminalColor.logError("illegal action");
@@ -494,6 +525,25 @@ public class DungeonRunner
         }
     }
 
+    private static void handleRecycler(Player player, String[] actions)
+    {
+        if (actions.length < 3)
+        {
+            TerminalColor.logError("illegal input");
+            return;
+        }
+        try
+        {
+            int index = Integer.parseInt(actions[2]);
+            if (actions[1].equalsIgnoreCase("buy")) player.retrieve(index);
+            else TerminalColor.logError("illegal input");
+        }
+        catch (NumberFormatException e)
+        {
+            TerminalColor.logError("illegal input");
+        }
+    }
+
     private static void handleActionWithIndex(Consumer<Integer> action, String[] actions)
     {
         if (actions.length < 2)
@@ -519,14 +569,20 @@ public class DungeonRunner
         System.out.println();
     }
 
-    private static String tableRow(String col1, String col2, String col3, String col4, String col5)
+    private static String tableRow(String col1,
+                                   String col2,
+                                   String col3,
+                                   String col4,
+                                   String col5,
+                                   String col6)
     {
-        return String.format("▪️│ %-21s │ %-21s │ %-21s │ %-21s │ %-21s │",
+        return String.format("▪️│ %-21s │ %-21s │ %-21s │ %-21s │ %-21s │ %-21s │",
                 pad(col1),
                 pad(col2),
                 pad(col3),
                 pad(col4),
-                pad(col5));
+                pad(col5),
+                pad(col6));
     }
 
     private static String tableDivider(int place)
@@ -534,11 +590,11 @@ public class DungeonRunner
         String line = "───────────────────────";
         String format = switch (place)
         {
-            case 0 -> "\uD83D\uDD3B┌%-23s┬%-23s┬%-23s┬%-23s┬%-23s┐\uD83D\uDD3B";
-            case 1 -> "\uD83D\uDD3A└%-23s┴%-23s┴%-23s┴%-23s┴%-23s┘\uD83D\uDD3A";
+            case 0 -> "\uD83D\uDD3B┌%-23s┬%-23s┬%-23s┬%-23s┬%-23s┬%-23s┐\uD83D\uDD3B";
+            case 1 -> "\uD83D\uDD3A└%-23s┴%-23s┴%-23s┴%-23s┴%-23s┴%-23s┘\uD83D\uDD3A";
             default -> "";
         };
-        return String.format(format, line, line, line, line, line);
+        return String.format(format, line, line, line, line, line, line);
     }
 
     private static String pad(String text)

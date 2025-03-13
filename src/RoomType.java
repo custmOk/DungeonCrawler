@@ -5,4 +5,5 @@ public enum RoomType
     EVENT,
     MINI_BOSS,
     BOSS,
+    RECYCLER,
 }

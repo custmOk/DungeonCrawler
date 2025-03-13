@@ -8,6 +8,7 @@ public class Room
     transient final String START = "\uD83C\uDFE0";
     transient final String PLAYER = "\uD83D\uDC6E";
     transient final String SHOP = "\uD83C\uDFEA";
+    transient final String RECYCLER = "\uD83D\uDDD1️";
     transient final String MONSTERS = "\uD83D\uDC80";
     transient final String MINI_BOSS = "\uD83D\uDC7F";
     transient final String BOSS = "\uD83D\uDC7A";
@@ -66,6 +67,7 @@ public class Room
         if (playerIn) status = PLAYER;
         else if (startingRoom) status = START;
         else if (type == RoomType.SHOP) status = SHOP;
+        else if (type == RoomType.RECYCLER) status = RECYCLER;
         else if (type == RoomType.MINI_BOSS)
         {
             if (!monsters.isEmpty())

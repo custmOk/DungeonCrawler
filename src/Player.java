@@ -48,6 +48,7 @@ public class Player
         dungeon.currentRoom.playerIn = true;
         dungeon.currentRoom.updateStatus();
         Settings.startingRoomNumber = dungeon.currentRoom.number;
+        System.out.println(dungeon.currentRoom.tempStatus);
     }
 
     private double levelScaleStrDefHpIntMatMdf(int level)
@@ -79,10 +80,14 @@ public class Player
 
             switch (direction.toUpperCase())
             {
-                case "W" -> dungeon.currentRoom = dungeon.dungeon[dungeon.currentRoom.row - 1][dungeon.currentRoom.col];
-                case "S" -> dungeon.currentRoom = dungeon.dungeon[dungeon.currentRoom.row + 1][dungeon.currentRoom.col];
-                case "A" -> dungeon.currentRoom = dungeon.dungeon[dungeon.currentRoom.row][dungeon.currentRoom.col - 1];
-                case "D" -> dungeon.currentRoom = dungeon.dungeon[dungeon.currentRoom.row][dungeon.currentRoom.col + 1];
+                case "W" ->
+                        dungeon.currentRoom = dungeon.dungeon[dungeon.currentRoom.row - 1][dungeon.currentRoom.col];
+                case "S" ->
+                        dungeon.currentRoom = dungeon.dungeon[dungeon.currentRoom.row + 1][dungeon.currentRoom.col];
+                case "A" ->
+                        dungeon.currentRoom = dungeon.dungeon[dungeon.currentRoom.row][dungeon.currentRoom.col - 1];
+                case "D" ->
+                        dungeon.currentRoom = dungeon.dungeon[dungeon.currentRoom.row][dungeon.currentRoom.col + 1];
             }
 
             dungeon.currentRoom.playerEnter();
@@ -153,7 +158,17 @@ public class Player
 
     public void classInfo()
     {
-        System.out.printf("Selected Class: %s%nStats:%n\tStrength - %d%n\tDefense - %d%n\tDexterity - %d%n" + "\tAgility - %d%n\tIntelligence - %d%n\tHealth Points - %d%n" + "\tLuck - " + "%d%n" + "\tMagic Attack - %d%n\tMagic Defense - %d%n", cls, cls.STR, cls.DEF, cls.DEX, cls.AGI, cls.INT, cls.HP, cls.LCK, cls.MAT, cls.MDF);
+        System.out.printf("Selected Class: %s%nStats:%n\tStrength - %d%n\tDefense - %d%n\tDexterity - %d%n" + "\tAgility - %d%n\tIntelligence - %d%n\tHealth Points - %d%n" + "\tLuck - " + "%d%n" + "\tMagic Attack - %d%n\tMagic Defense - %d%n",
+                cls,
+                cls.STR,
+                cls.DEF,
+                cls.DEX,
+                cls.AGI,
+                cls.INT,
+                cls.HP,
+                cls.LCK,
+                cls.MAT,
+                cls.MDF);
     }
 
     public void contents()
@@ -163,7 +178,8 @@ public class Player
 
     public void examineMonster(int index)
     {
-        if (index < 0 || index >= dungeon.currentRoom.monsters.size()) TerminalColor.logError("invalid index");
+        if (index < 0 || index >= dungeon.currentRoom.monsters.size())
+            TerminalColor.logError("invalid index");
         else System.out.println(dungeon.currentRoom.monsters.get(index));
     }
 
@@ -274,7 +290,8 @@ public class Player
 
     public void attack(int index)
     {
-        if (index < 0 || index >= dungeon.currentRoom.monsters.size()) TerminalColor.logError("invalid index");
+        if (index < 0 || index >= dungeon.currentRoom.monsters.size())
+            TerminalColor.logError("invalid index");
         else
         {
             Monster monster = dungeon.currentRoom.monsters.get(index);
@@ -293,11 +310,17 @@ public class Player
                     double changeBy = baseChange * (isCritical ? 2 : 1);
                     monster.health -= changeBy;
                     weapon.uses--;
-                    System.out.printf("\uD83D\uDCA5 You hit %s for %.2f%s damage%n", monster.type, changeBy, isCritical ? " " + TerminalColor.critical("critical") : "");
+                    System.out.printf("\uD83D\uDCA5 You hit %s for %.2f%s damage%n",
+                            monster.type,
+                            changeBy,
+                            isCritical ? " " + TerminalColor.critical("critical") : "");
                     if (weapon.uses == 1) System.out.printf("%s has one more use%n", weapon.getInfo());
                     if (weapon.uses <= 0)
                     {
                         inventory.remove(weapon);
+                        Recycler recyclerRoom = (Recycler) dungeon.recylerRoom;
+                        weapon.price *= 2;
+                        recyclerRoom.recycleItem(weapon);
                         System.out.println("\uD83D\uDCA2 Weapon broken");
                         equipped = null;
                     }
@@ -310,7 +333,8 @@ public class Player
                     {
                         hit = true;
                         double baseChange = spell.damage * levelScaleStrDefHpIntMatMdf(cls.MAT);
-                        String effectiveness = monster.element == null ? "boosted" : spell.element.name.equals(monster.element.name) ? "normal" : spell.element.strong.equals(monster.element.name) ? "strengthened" : "weakened";
+                        String effectiveness = monster.element == null ? "boosted" : spell.element.name.equals(
+                                monster.element.name) ? "normal" : spell.element.strong.equals(monster.element.name) ? "strengthened" : "weakened";
                         double changeFactor = switch (effectiveness)
                         {
                             case "strengthened" -> 2;
@@ -321,7 +345,11 @@ public class Player
                         double changeBy = baseChange * changeFactor;
                         monster.health -= changeBy;
                         mana -= spell.manaCost;
-                        System.out.printf("%s You hit %s for %.2f %s damage%n", spell.icon, monster.type, changeBy, effectiveness);
+                        System.out.printf("%s You hit %s for %.2f %s damage%n",
+                                spell.icon,
+                                monster.type,
+                                changeBy,
+                                effectiveness);
                     }
                 }
                 default -> System.out.println("How did you get here?");
@@ -367,8 +395,12 @@ public class Player
         if (dungeon.currentRoom.type == RoomType.SHOP)
         {
             Shop room = (Shop) dungeon.currentRoom;
-            Item item = room.contents.get(index);
-            System.out.printf(item + " | \uD83E\uDE99 Price: %d%n", item.price);
+            if (index < 0 || index >= room.contents.size()) TerminalColor.logError("invalid index");
+            else
+            {
+                Item item = room.contents.get(index);
+                System.out.printf(item + " | \uD83E\uDE99 Price: %d%n", item.price);
+            }
         }
         else System.out.printf("❗You must be in a shop room! (%s)%n", dungeon.currentRoom.SHOP);
     }
@@ -378,20 +410,7 @@ public class Player
         if (dungeon.currentRoom.type == RoomType.SHOP)
         {
             Shop room = (Shop) dungeon.currentRoom;
-            if (index < 0 || index >= room.contents.size()) TerminalColor.logError("invalid index");
-            else
-            {
-                Item item = room.contents.get(index);
-                if (coins < item.price) System.out.println("Not enough coins");
-                else
-                {
-                    inventory.add(item);
-                    room.contents.remove(item);
-                    int changeBy = Math.max(0, coins - item.price);
-                    coins -= changeBy;
-                    System.out.printf(item.getInfo() + " bought for %d coins%n", item.price);
-                }
-            }
+            purchase(index, room);
         }
         else System.out.printf("❗You must be in a shop room! (%s)%n", dungeon.currentRoom.SHOP);
     }
@@ -414,11 +433,53 @@ public class Player
         else System.out.printf("❗You must be in a shop room! (%s)%n", dungeon.currentRoom.SHOP);
     }
 
+    public void recycler()
+    {
+        if (dungeon.currentRoom.type == RoomType.RECYCLER)
+        {
+            Recycler room = (Recycler) dungeon.currentRoom;
+            for (int i = 0; i < room.contents.size(); i++)
+            {
+                Item item = room.contents.get(i);
+                System.out.printf("%s %s - %d coins [%d]%n", item.icon, item.name, item.price, i);
+            }
+        }
+        else System.out.printf("❗You must be in a recycler room! (%s)%n", dungeon.currentRoom.RECYCLER);
+    }
+
+    public void recycler(int index)
+    {
+        if (dungeon.currentRoom.type == RoomType.RECYCLER)
+        {
+            Recycler room = (Recycler) dungeon.currentRoom;
+            if (index < 0 || index >= room.contents.size()) TerminalColor.logError("invalid index");
+            else
+            {
+                Item item = room.contents.get(index);
+                System.out.printf(item + " | \uD83E\uDE99 Price: %d%n", item.price);
+            }
+        }
+        else System.out.printf("❗You must be in a recycler room! (%s)%n", dungeon.currentRoom.RECYCLER);
+    }
+
+    public void retrieve(int index)
+    {
+        if (dungeon.currentRoom.type == RoomType.RECYCLER)
+        {
+            Recycler room = (Recycler) dungeon.currentRoom;
+            purchase(index, room);
+        }
+        else System.out.printf("❗You must be in a recycler room! (%s)%n", dungeon.currentRoom.RECYCLER);
+    }
+
     public boolean escape()
     {
         if (dungeon.currentRoom.startingRoom)
         {
-            System.out.printf("\uD83C\uDFC6 Successfully Escaped!%n\uD83D\uDC7F Monsters Defeated: %d%n\uD83E\uDE99 Coins " + "Collected: %d%n", defeatedMonsters, coins);
+            System.out.printf(
+                    "\uD83C\uDFC6 Successfully Escaped!%n\uD83D\uDC7F Monsters Defeated: %d%n\uD83E\uDE99 Coins " + "Collected: %d%n",
+                    defeatedMonsters,
+                    coins);
             return true;
         }
         else
@@ -439,9 +500,9 @@ public class Player
         }
 
         File dungeonFile = new File("saves\\" + dungeon.dungeonName + ".txt");
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter(Random.class, new RandomTypeAdapter())
+        Gson gson = new GsonBuilder().registerTypeAdapter(Random.class, new RandomTypeAdapter())
                 .registerTypeAdapter(File.class, new FileTypeAdapter())
+                .registerTypeAdapter(Class.class, new ClassTypeAdapter())
                 .setPrettyPrinting()
                 .create();
 
@@ -463,20 +524,28 @@ public class Player
     {
         for (Monster monster : dungeon.currentRoom.monsters)
         {
-            String effectiveness = monster.element == null ? "normal" : affinity.name.equals(monster.element.name) ? "normal" : affinity.weak.equals(monster.element.name) ? "strengthened" : "weakened";
+            String effectiveness = monster.element == null ? "normal" : affinity.name.equals(monster.element.name) ? "normal" : affinity.weak.equals(
+                    monster.element.name) ? "strengthened" : "weakened";
             double affinityScaling = switch (effectiveness)
             {
                 case "strengthened" -> 2;
                 case "weakened" -> 0.5;
                 default -> 1;
             };
-            double baseChange = monster.element == null ? monster.weapon.damage * levelScaleStrDefHpIntMatMdf(cls.DEF) : monster.weapon.damage * levelScaleStrDefHpIntMatMdf(cls.MDF) * affinityScaling;
+            System.out.println(monster.weapon.damage);
+            System.out.println(cls.DEF);
+            double baseChange = monster.element == null ? monster.weapon.damage * levelScaleStrDefHpIntMatMdf(
+                    cls.DEF) : monster.weapon.damage * levelScaleStrDefHpIntMatMdf(cls.MDF) * affinityScaling;
             boolean dodged = rand.nextInt(100) < levelScaleDexAgiLck(cls.AGI);
             double changeBy = baseChange * (dodged ? 0 : 1);
             health -= changeBy;
-            if (dodged)
-                System.out.printf("\uD83D\uDCA8 You dodged %s's attack for %.2f damage%n", monster.type, baseChange);
-            else System.out.printf("\uD83D\uDC98 %s dealt %.2f %s damage%n", monster.type, changeBy, effectiveness);
+            if (dodged) System.out.printf("\uD83D\uDCA8 You dodged %s's attack for %.2f damage%n",
+                    monster.type,
+                    baseChange);
+            else System.out.printf("\uD83D\uDC98 %s dealt %.2f %s damage%n",
+                    monster.type,
+                    changeBy,
+                    effectiveness);
         }
 
         if (!dungeon.currentRoom.monsters.isEmpty()) health();
@@ -484,6 +553,24 @@ public class Player
         {
             System.out.println("\uD83D\uDC94 You were defeated :(");
             dead = true;
+        }
+    }
+
+    private void purchase(int index, Purchasable room)
+    {
+        List<Item> contents = room.getContents();
+        if (index < 0 || index >= contents.size()) TerminalColor.logError("invalid index");
+        else
+        {
+            Item item = contents.get(index);
+            if (coins < item.price) System.out.println("Not enough coins");
+            else
+            {
+                inventory.add(item);
+                contents.remove(item);
+                coins -= item.price;
+                System.out.printf(item.getInfo() + " bought for %d coins%n", item.price);
+            }
         }
     }
 }

@@ -11,6 +11,7 @@ public class Dungeon
     final int SIZE = 10;
 
     Room currentRoom;
+    Room recylerRoom;
 
     List<Room> openRooms = new ArrayList<>();
     Room[][] dungeon = new Room[SIZE][SIZE];
@@ -54,6 +55,8 @@ public class Dungeon
         int maxMiniBosses = 3;
         int bosses = 0;
         int maxBosses = 1;
+        int recyclers = 0;
+        int maxRecyclers = 1;
         int row = rand.nextInt(SIZE);
         int col = rand.nextInt(SIZE);
 
@@ -83,24 +86,34 @@ public class Dungeon
             }
             if (!dungeon[row][col].getOpen())
             {
-                int roomsRequired = (maxShops - shops) + (maxMiniBosses - miniBosses) + (maxBosses - bosses);
+                int roomsRequired = (maxShops - shops) + (maxMiniBosses - miniBosses) + (maxBosses - bosses) + (maxRecyclers - recyclers);
                 boolean isShop = shops < maxShops && rand.nextDouble() < 0.1 || targetRooms - roomsOpen <= roomsRequired;
                 boolean isMiniBoss = !isShop && miniBosses < maxMiniBosses && rand.nextDouble() < 0.25 || targetRooms - roomsOpen <= roomsRequired;
                 boolean isBoss = !isShop && !isMiniBoss && bosses < maxBosses && rand.nextDouble() < 0.1 || targetRooms - roomsOpen <= roomsRequired;
+                boolean isRecycler = !isShop && !isMiniBoss && !isBoss && recyclers < maxRecyclers && rand.nextDouble() < 0.1 || targetRooms - roomsOpen <= roomsRequired;
 
                 if (isShop)
                 {
-                    dungeon[row][col] = new Shop(true, dungeon[row][col].number, dungeon[row][col].row, dungeon[row][col].col, this);
+                    dungeon[row][col] = new Shop(true,
+                            dungeon[row][col].number,
+                            dungeon[row][col].row,
+                            dungeon[row][col].col,
+                            this);
                     dungeon[row][col].type = RoomType.SHOP;
                     shops++;
                 }
                 else if (isMiniBoss)
                 {
-                    dungeon[row][col] = new MiniBoss(true, dungeon[row][col].number, dungeon[row][col].row, dungeon[row][col].col, this);
+                    dungeon[row][col] = new MiniBoss(true,
+                            dungeon[row][col].number,
+                            dungeon[row][col].row,
+                            dungeon[row][col].col,
+                            this);
                     dungeon[row][col].type = RoomType.MINI_BOSS;
                     for (int i = 0; i < rand.nextInt(2); i++)
                     {
-                        dungeon[row][col].addItem(rand.nextBoolean() ? generateRandomWeapon(Rarity.EPIC) : generateRandomPotion(Rarity.EPIC));
+                        dungeon[row][col].addItem(rand.nextBoolean() ? generateRandomWeapon(Rarity.EPIC) : generateRandomPotion(
+                                Rarity.EPIC));
                     }
                     for (int i = 0; i < rand.nextInt(3); i++)
                     {
@@ -116,9 +129,14 @@ public class Dungeon
                 }
                 else if (isBoss)
                 {
-                    dungeon[row][col] = new Boss(true, dungeon[row][col].number, dungeon[row][col].row, dungeon[row][col].col, this);
+                    dungeon[row][col] = new Boss(true,
+                            dungeon[row][col].number,
+                            dungeon[row][col].row,
+                            dungeon[row][col].col,
+                            this);
                     dungeon[row][col].type = RoomType.BOSS;
-                    dungeon[row][col].addItem(rand.nextBoolean() ? generateRandomWeapon(Rarity.LEGENDARY) : generateRandomPotion(Rarity.LEGENDARY));
+                    dungeon[row][col].addItem(rand.nextBoolean() ? generateRandomWeapon(Rarity.LEGENDARY) : generateRandomPotion(
+                            Rarity.LEGENDARY));
                     for (int i = 0; i < rand.nextInt(2); i++)
                     {
                         double chance = rand.nextDouble();
@@ -130,6 +148,17 @@ public class Dungeon
                     }
                     dungeon[row][col].addMonster(generateRandomMonster(Rarity.LEGENDARY));
                     bosses++;
+                }
+                else if (isRecycler)
+                {
+                    dungeon[row][col] = new Recycler(true,
+                            dungeon[row][col].number,
+                            dungeon[row][col].row,
+                            dungeon[row][col].col,
+                            this);
+                    dungeon[row][col].type = RoomType.RECYCLER;
+                    recyclers++;
+                    recylerRoom = dungeon[row][col];
                 }
                 else
                 {
@@ -143,7 +172,8 @@ public class Dungeon
                         if (chance < 0.6) rarity = Rarity.COMMON;
                         else if (chance < 0.9) rarity = Rarity.UNCOMMON;
                         else rarity = Rarity.RARE;
-                        dungeon[row][col].addItem(rand.nextBoolean() ? generateRandomWeapon(rarity) : generateRandomPotion(rarity));
+                        dungeon[row][col].addItem(rand.nextBoolean() ? generateRandomWeapon(rarity) : generateRandomPotion(
+                                rarity));
                     }
                     for (int i = 0; i < rand.nextInt(5); i++)
                     {
@@ -245,7 +275,11 @@ public class Dungeon
         };
         Weapon weapon = generateRandomWeapon(rarity);
 
-        return new Monster(monsterType, health, weapon, rand.nextBoolean() ? generateRandomElement() : null, rarity);
+        return new Monster(monsterType,
+                health,
+                weapon,
+                rand.nextBoolean() ? generateRandomElement() : null,
+                rarity);
     }
 
     private Element generateRandomElement()
@@ -308,5 +342,64 @@ class FileTypeAdapter
     public File read(JsonReader in) throws IOException
     {
         return new File(in.nextString());
+    }
+}
+
+class ClassTypeAdapter
+        extends TypeAdapter<Class>
+{
+    @Override
+    public void write(JsonWriter out, Class value) throws IOException
+    {
+        // Serialize the enum and its fields
+        out.beginObject();
+        out.name("name").value(value.name()); // Serialize the enum name
+        out.name("STR").value(value.STR);
+        out.name("DEF").value(value.DEF);
+        out.name("DEX").value(value.DEX);
+        out.name("AGI").value(value.AGI);
+        out.name("INT").value(value.INT);
+        out.name("HP").value(value.HP);
+        out.name("LCK").value(value.LCK);
+        out.name("MAT").value(value.MAT);
+        out.name("MDF").value(value.MDF);
+        out.endObject();
+    }
+
+    @Override
+    public Class read(JsonReader in) throws IOException
+    {
+        in.beginObject();
+        String enumName;
+        Class enumValue = null;
+
+        while (in.hasNext())
+        {
+            String fieldName = in.nextName();
+            if ("name".equals(fieldName))
+            {
+                enumName = in.nextString();
+                enumValue = Class.valueOf(enumName);
+            }
+            else if (enumValue != null)
+            {
+                switch (fieldName)
+                {
+                    case "STR" -> enumValue.STR = in.nextInt();
+                    case "DEF" -> enumValue.DEF = in.nextInt();
+                    case "DEX" -> enumValue.DEX = in.nextInt();
+                    case "AGI" -> enumValue.AGI = in.nextInt();
+                    case "INT" -> enumValue.INT = in.nextInt();
+                    case "HP" -> enumValue.HP = in.nextInt();
+                    case "LCK" -> enumValue.LCK = in.nextInt();
+                    case "MAT" -> enumValue.MAT = in.nextInt();
+                    case "MDF" -> enumValue.MDF = in.nextInt();
+                    default -> in.skipValue();
+                }
+            }
+            else in.skipValue();
+        }
+        in.endObject();
+        return enumValue;
     }
 }

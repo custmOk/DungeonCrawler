@@ -3,18 +3,9 @@ import java.util.Map;
 
 public enum Class
 {
-    WARRIOR("Warrior",
-            "💂",
-            TerminalColor.RED),
-    THIEF("Thief",
-          "🥷",
-          TerminalColor.BLUE),
-    MAGE("Mage",
-         "🧙",
-         TerminalColor.MAGENTA),
-    RANGER("Ranger",
-           "🧝",
-           TerminalColor.GREEN);
+    WARRIOR("Warrior", "💂", TerminalColor.RED), THIEF("Thief", "🥷", TerminalColor.BLUE), MAGE("Mage",
+        "🧙",
+        TerminalColor.MAGENTA), RANGER("Ranger", "🧝", TerminalColor.GREEN);
 
     final String name, icon;
     final TerminalColor color;
@@ -44,13 +35,13 @@ public enum Class
                 MDF = Level.getRandomValue(Level.LOW);
 
                 return Map.of("Highest",
-                              List.of("STR", "DEF"),
-                              "High",
-                              List.of("HP"),
-                              "Low",
-                              List.of("MDF", "DEX", "AGI"),
-                              "Lowest",
-                              List.of("MAT", "LCK", "INT"));
+                        List.of("STR", "DEF"),
+                        "High",
+                        List.of("HP"),
+                        "Low",
+                        List.of("MDF", "DEX", "AGI"),
+                        "Lowest",
+                        List.of("MAT", "LCK", "INT"));
             }
             case THIEF ->
             {
@@ -65,13 +56,13 @@ public enum Class
                 MDF = Level.getRandomValue(Level.LOWEST);
 
                 return Map.of("Highest",
-                              List.of("DEX", "AGI"),
-                              "High",
-                              List.of("MAT", "LCK"),
-                              "Low",
-                              List.of("HP", "STR", "INT"),
-                              "Lowest",
-                              List.of("DEF", "MDF"));
+                        List.of("DEX", "AGI"),
+                        "High",
+                        List.of("MAT", "LCK"),
+                        "Low",
+                        List.of("HP", "STR", "INT"),
+                        "Lowest",
+                        List.of("DEF", "MDF"));
             }
             case MAGE ->
             {
@@ -86,13 +77,13 @@ public enum Class
                 MDF = Level.getRandomValue(Level.HIGHEST);
 
                 return Map.of("Highest",
-                              List.of("INT", "MAT", "MDF"),
-                              "High",
-                              List.of("HP"),
-                              "Low",
-                              List.of("LCK", "DEX"),
-                              "Lowest",
-                              List.of("STR", "AGI", "DEF"));
+                        List.of("INT", "MAT", "MDF"),
+                        "High",
+                        List.of("HP"),
+                        "Low",
+                        List.of("LCK", "DEX"),
+                        "Lowest",
+                        List.of("STR", "AGI", "DEF"));
             }
             case RANGER ->
             {
@@ -107,13 +98,13 @@ public enum Class
                 MDF = Level.getRandomValue(Level.LOWEST);
 
                 return Map.of("Highest",
-                              List.of("LCK", "AGI"),
-                              "High",
-                              List.of("DEX", "INT"),
-                              "Low",
-                              List.of("DEF", "HP", "MAT"),
-                              "Lowest",
-                              List.of("MDF", "STR"));
+                        List.of("LCK", "AGI"),
+                        "High",
+                        List.of("DEX", "INT"),
+                        "Low",
+                        List.of("DEF", "HP", "MAT"),
+                        "Lowest",
+                        List.of("MDF", "STR"));
             }
             default ->
             {
