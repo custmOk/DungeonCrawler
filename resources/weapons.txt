@@ -1,43 +1,106 @@
-Longsword
-Short sword
+Arcane Focus
+Bardiche
+Bastard Sword
+Battleaxe
+Bayonet
+Bladed Fan
+Blowgun
+Blowpipe
+Boomerang
+Brass Knuckles
 Broadsword
-Rapier
-Katana
-Scimitar
-Falchion
+Cestus
+Chain Whip
+Chakram
+Clawed Gauntlets
 Claymore
-Mace
-Warhammer
 Club
-Flail
-Morning Star
-Quarterstaff
-Scepter
-Polearms
-Spear
-Halberd
-Glaive
-Pike
-Naginata
-Trident
-Battle Axe
-Hand Axe
-War Axe
-Double-headed Axe
-Tomahawk
+Composite Bow
+Crystal Focus
+Cudgel
+Cutlass
 Dagger
 Dirk
-Stiletto
-Bowie Knife
-Throwing Knife
-Kunai
-Nunchaku
-Sai
-Chakram
-Whip
-Scythe
-Sickle
-Hand-to-Hand
-Brass Knuckles
-Cestus
+Doloire
+Dragon Slayer
+Energy Sword
+Estoc
+Falchion
+Fangblade
+Fauchard
+Fire Lance
+Flail
+Gauntlets
+Glaive
+Greataxe
+Greatbow
+Guisarme
+Gunblade
+Halberd
+Hand Crossbow
+Handaxe
+Harpoon
+Heavy Crossbow
+Hook Sword
+Javelin
+Kanabo
+Katana
 Katar
+Kris
+Kukri
+Kusarigama
+Lance
+Light Crossbow
+Longbow
+Longsword
+Mace
+Macuahuitl
+Manriki-Gusari
+Maul
+Morningstar
+Mystic Staff
+Naginata
+Nodachi
+Nunchaku
+Orb
+Partisan
+Pike
+Plasma Blade
+Poleaxe
+Punch Dagger
+Quarterstaff
+Ranseur
+Rapier
+Recurve Bow
+Repeating Crossbow
+Rod
+Rope Dart
+Sabre
+Sai
+Scepter
+Scimitar
+Scythe
+Shadow Dagger
+Shortbow
+Shortsword
+Shuriken
+Sickle
+Slingshot
+Spear
+Spellblade
+Stiletto
+Tanto
+Tessen
+Tetsubo
+Throwing Knife
+Tomahawk
+Tonfa
+Trident
+Voulge
+Wakizashi
+Wand
+War Pick
+War Scythe
+Warhammer
+Whip
+Zweihander

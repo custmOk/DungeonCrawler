@@ -48,7 +48,6 @@ public class Player
         dungeon.currentRoom.playerIn = true;
         dungeon.currentRoom.updateStatus();
         Settings.startingRoomNumber = dungeon.currentRoom.number;
-        System.out.println(dungeon.currentRoom.tempStatus);
     }
 
     private double levelScaleStrDefHpIntMatMdf(int level)
@@ -75,8 +74,9 @@ public class Player
         if (validateMove(direction))
         {
             monstersAttack();
+
             dungeon.currentRoom.playerLeave();
-            Room prevRoom = dungeon.currentRoom;
+            dungeon.currentRoom.updateStatus();
 
             switch (direction.toUpperCase())
             {
@@ -91,7 +91,6 @@ public class Player
             }
 
             dungeon.currentRoom.playerEnter();
-            prevRoom.updateStatus();
             dungeon.currentRoom.updateStatus();
         }
         else TerminalColor.logError("invalid move");
@@ -318,7 +317,7 @@ public class Player
                     if (weapon.uses <= 0)
                     {
                         inventory.remove(weapon);
-                        Recycler recyclerRoom = (Recycler) dungeon.recylerRoom;
+                        Recycler recyclerRoom = (Recycler) dungeon.recyclerRoom;
                         weapon.price *= 2;
                         recyclerRoom.recycleItem(weapon);
                         System.out.println("\uD83D\uDCA2 Weapon broken");
@@ -532,8 +531,6 @@ public class Player
                 case "weakened" -> 0.5;
                 default -> 1;
             };
-            System.out.println(monster.weapon.damage);
-            System.out.println(cls.DEF);
             double baseChange = monster.element == null ? monster.weapon.damage * levelScaleStrDefHpIntMatMdf(
                     cls.DEF) : monster.weapon.damage * levelScaleStrDefHpIntMatMdf(cls.MDF) * affinityScaling;
             boolean dodged = rand.nextInt(100) < levelScaleDexAgiLck(cls.AGI);

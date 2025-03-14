@@ -40,7 +40,7 @@ public class DungeonRunner
                 {
                     System.out.print("Enter save name: ");
                     String name = sc.nextLine();
-                    name = name.strip();
+                    name = name.strip().toLowerCase();
                     if (name.split("\\s+").length != 1)
                         TerminalColor.logError("file name cannot contain spaces");
                     else if (name.length() < 3 || name.length() > 16)
@@ -51,7 +51,7 @@ public class DungeonRunner
                         if (files != null)
                         {
                             ArrayList<String> list = new ArrayList<>(Arrays.stream(files)
-                                    .map(file -> file.getName().replace(".txt", ""))
+                                    .map(file -> file.getName().replace(".txt", "").toLowerCase())
                                     .toList());
                             if (list.contains(name)) TerminalColor.logError("file name already exists");
                             else
@@ -115,7 +115,9 @@ public class DungeonRunner
                             }
 
                             run = false;
-                            System.out.println(player.cls.DEF);
+
+                            dungeon.currentRoom.playerIn = true;
+                            dungeon.currentRoom.updateStatus();
 
                             startGameLoop();
                         }
@@ -599,7 +601,7 @@ public class DungeonRunner
 
     private static String pad(String text)
     {
-        String plainText = text.replaceAll("\u001B\\[[;\\d]*m", "");
+        String plainText = text.replaceAll("\u001B\\[[;\\d]*m", "").replaceAll("️", "");
         int padding = 20 - plainText.length() + 1;
         return text + " ".repeat(Math.max(0, padding));
     }

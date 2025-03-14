@@ -11,7 +11,7 @@ public class Dungeon
     final int SIZE = 10;
 
     Room currentRoom;
-    Room recylerRoom;
+    Room recyclerRoom;
 
     List<Room> openRooms = new ArrayList<>();
     Room[][] dungeon = new Room[SIZE][SIZE];
@@ -158,7 +158,7 @@ public class Dungeon
                             this);
                     dungeon[row][col].type = RoomType.RECYCLER;
                     recyclers++;
-                    recylerRoom = dungeon[row][col];
+                    recyclerRoom = dungeon[row][col];
                 }
                 else
                 {
@@ -299,7 +299,6 @@ public class Dungeon
     String getDungeon()
     {
         StringBuilder sb = new StringBuilder();
-        sb.append(seed).append("\n");
         sb.append("\uD83E\uDDF1".repeat(SIZE + 2)).append("\n");
         for (Room[] row : dungeon)
         {
